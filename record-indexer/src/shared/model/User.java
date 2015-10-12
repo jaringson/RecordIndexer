@@ -14,6 +14,8 @@ public class User {
 	private int indexrecords;
 	private int curBatch;
 	
+	
+	
 	public int getId() {
 		return id;
 	}

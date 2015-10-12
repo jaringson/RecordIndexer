@@ -23,7 +23,7 @@ private static Logger logger;
 		this.db = db;
 	}
 	
-	public List<User> getAllUsers() throws DatabaseException {
+	public List<User> GetAllUsers() throws DatabaseException {
 		
 		logger.entering("server.database.Contacts", "getAll");
 		
@@ -31,19 +31,28 @@ private static Logger logger;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
-			String query = "select id, name, phone, address, email, url from contact";
+			String query = "select id, username, password, firstname, lastname, indexrecords, curBatch_id from users";
 			stmt = db.getConnection().prepareStatement(query);
 
 			rs = stmt.executeQuery();
 			while (rs.next()) {
 				int id = rs.getInt(1);
-				String name = rs.getString(2);
-				String phone = rs.getString(3);
-				String address = rs.getString(4);
-				String email = rs.getString(5);
-				String url = rs.getString(6);
-
-				//result.add(new User(id, name, phone, address, email, url));
+				String username = rs.getString(2);
+				String password = rs.getString(3);
+				String firstname = rs.getString(4);
+				String lastname = rs.getString(5);
+				int indexrecords = rs.getInt(6);
+				int curBatch = rs.getInt(7);
+				
+				User tempUser = new User();
+				tempUser.setUsername(username);
+				tempUser.setPassword(password);
+				tempUser.setFirstname(firstname);
+				tempUser.setLastname(lastname);
+				tempUser.setIndexrecords(indexrecords);
+				tempUser.setCurBatch(curBatch);
+				
+				result.add(tempUser);
 			}
 		}
 		catch (SQLException e) {
