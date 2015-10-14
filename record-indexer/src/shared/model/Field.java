@@ -8,13 +8,14 @@ package shared.model;
  *
  */
 
-public class Fields {
+public class Field {
 	private int id;
 	private String title;
 	private int xcoord;
 	private int width;
 	private String helphtml;
 	private String knowndata;
+	
 	public int getId() {
 		return id;
 	}

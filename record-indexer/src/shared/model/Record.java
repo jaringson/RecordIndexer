@@ -7,7 +7,7 @@ package shared.model;
  *
  */
 
-public class Records {
+public class Record {
 	private int id;
 	private int image_id;
 	public int getId() {

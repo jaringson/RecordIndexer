@@ -16,19 +16,19 @@ public class Project {
 	private int recordsperimage;
 	private int firstycoordinate;
 	private int recordheight;
-	private ArrayList<Fields> fields;
-	private ArrayList<Images> images;
+	private ArrayList<Field> fields;
+	private ArrayList<Batch> images;
 	
-	public ArrayList<Images> getImages() {
+	public ArrayList<Batch> getImages() {
 		return images;
 	}
-	public void setImages(ArrayList<Images> images) {
+	public void setImages(ArrayList<Batch> images) {
 		this.images = images;
 	}
-	public ArrayList<Fields> getFields() {
+	public ArrayList<Field> getFields() {
 		return fields;
 	}
-	public void setFields(ArrayList<Fields> fields) {
+	public void setFields(ArrayList<Field> fields) {
 		this.fields = fields;
 	}
 	public int getId() {
