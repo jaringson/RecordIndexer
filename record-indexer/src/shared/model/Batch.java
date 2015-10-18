@@ -1,5 +1,9 @@
 package shared.model;
 
+import org.w3c.dom.Element;
+
+import server.importer.DataImporter;
+
 /**
  * Holds the information for the Batch class.
  * Contains all getters and setters.
@@ -14,6 +18,9 @@ public class Batch {
 	private String file;
 	boolean complete;
 	
+//	public Batch(Element item) {
+//		file = Integer.parseInt(DataImporter.getValue((Element)projectElement.getElementsByTagName("firstycoord").item(0)));
+//	}
 	public int getId() {
 		return id;
 	}

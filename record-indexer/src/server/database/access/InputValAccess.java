@@ -2,9 +2,17 @@ package server.database.access;
 
 import java.util.ArrayList;
 
+import server.database.Database;
 import shared.model.Inputvalues;
 
 public class InputValAccess {
+	
+	private Database db;
+	
+	public InputValAccess(Database db) {
+		this.db = db;
+	}
+	
 	/**
 	 * Gets all inputValues
 	 * @return List of InputValues

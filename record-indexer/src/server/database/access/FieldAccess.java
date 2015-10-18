@@ -2,9 +2,16 @@ package server.database.access;
 
 import java.util.ArrayList;
 
+import server.database.Database;
 import shared.model.*;
 
 public class FieldAccess {
+	
+	private Database db;
+	
+	public FieldAccess(Database db) {
+		this.db = db;
+	}
 	
 	/**
 	 * 

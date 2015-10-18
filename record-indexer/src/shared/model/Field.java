@@ -1,5 +1,9 @@
 package shared.model;
 
+import org.w3c.dom.Element;
+
+import server.importer.DataImporter;
+
 /**
  * Holds the information for the Field class.
  * Contains all getters and setters.
@@ -16,6 +20,13 @@ public class Field {
 	private String helphtml;
 	private String knowndata;
 	
+	public Field(Element item) {
+		title = DataImporter.getValue((Element)item.getElementsByTagName("title").item(0));
+		xcoord = Integer.parseInt(DataImporter.getValue((Element)item.getElementsByTagName("xcoord").item(0)));
+		width = Integer.parseInt(DataImporter.getValue((Element)item.getElementsByTagName("width").item(0)));
+		helphtml = DataImporter.getValue((Element)item.getElementsByTagName("helphtml").item(0));
+		knowndata = DataImporter.getValue((Element)item.getElementsByTagName("knowndata").item(0));
+	}
 	public int getId() {
 		return id;
 	}

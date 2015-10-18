@@ -2,6 +2,11 @@ package shared.model;
 
 import java.util.ArrayList;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import server.importer.DataImporter;
+
 /**
  * Holds the information for the Project class.
  * Contains all getters and setters.
@@ -11,38 +16,38 @@ import java.util.ArrayList;
  */
 public class Project {
 	private int id;
-	private int batch_id;
+
 	private String title;
 	private int recordsperimage;
 	private int firstycoordinate;
 	private int recordheight;
-	private ArrayList<Field> fields;
-	private ArrayList<Batch> images;
 	
-	public ArrayList<Batch> getImages() {
-		return images;
+	//private ArrayList<Field> fields;
+	//private ArrayList<Batch> batches;
+	
+
+	
+	public Project(){
+		
 	}
-	public void setImages(ArrayList<Batch> images) {
-		this.images = images;
+	
+	public Project(int id, String title, int recordsperimage,
+			int firstycoordinate, int recordheight) {
+		super();
+		this.id = id;
+		this.title = title;
+		this.recordsperimage = recordsperimage;
+		this.firstycoordinate = firstycoordinate;
+		this.recordheight = recordheight;
 	}
-	public ArrayList<Field> getFields() {
-		return fields;
-	}
-	public void setFields(ArrayList<Field> fields) {
-		this.fields = fields;
-	}
+
 	public int getId() {
 		return id;
 	}
 	public void setId(int id) {
 		this.id = id;
 	}
-	public int getBatch_id() {
-		return batch_id;
-	}
-	public void setBatch_id(int batch_id) {
-		this.batch_id = batch_id;
-	}
+
 	public String getTitle() {
 		return title;
 	}

@@ -11,11 +11,34 @@ public class User {
 	private String password;
 	private String firstname;
 	private String lastname;
+	private String email;
 	private int indexrecords;
 	private int curBatch;
-	private String email;
 	
 	
+
+	public User(int id, String username, String password, String firstname,
+			String lastname, String email, int indexrecords, int curBatch) {
+		super();
+		this.id = id;
+		this.username = username;
+		this.password = password;
+		this.firstname = firstname;
+		this.lastname = lastname;
+		this.email = email;
+		this.indexrecords = indexrecords;
+		this.curBatch = curBatch;
+	}
+	/*public User() {
+		this.id = 0;
+		this.username = null;
+		this.password = null;
+		this.firstname = null;
+		this.lastname = null;
+		this.email = null;
+		this.indexrecords = 0;
+		this.curBatch = 0;
+	}*/
 	public String getEmail() {
 		return email;
 	}

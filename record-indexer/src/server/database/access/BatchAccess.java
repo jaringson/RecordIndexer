@@ -5,9 +5,17 @@ package server.database.access;
 import java.io.File;
 import java.util.ArrayList;
 
+import server.database.Database;
 import shared.model.*;
 
 public class BatchAccess {
+	
+	private Database db;
+	
+	public BatchAccess(Database db) {
+		this.db = db;
+	}
+	
 	/**
 	 * Queries the database for a specific image file.
 	 * @param username

@@ -20,7 +20,7 @@ private static Logger logger;
 
 	private Database db;
 	
-	ProjectAccess(Database db) {
+	public ProjectAccess(Database db) {
 		this.db = db;
 	}
 	
@@ -30,40 +30,29 @@ private static Logger logger;
 	 * @param username
 	 * @param password
 	 * @return An ArrayList of Project Objects if not failed, null otherwise.
+	 * @throws DatabaseException 
 	 */
-	public ArrayList<Project> getProjects(String username, String password){
-		return null;
-	}
-	/**
-	 * Gets a Project by its ID
-	 * @param id
-	 * @return project
-	 */
-	public Project getProjectByID(int id){
-		logger.entering("server.database.Contacts", "getAll");
-
+	public ArrayList<Project> getProjects() throws DatabaseException{
+		ArrayList<Project> result = new ArrayList<Project>();
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
-			String query = "select id, name, phone, address, email, url from projects";
+			String query = "select * from projects";
 			stmt = db.getConnection().prepareStatement(query);
 
 			rs = stmt.executeQuery();
 			while (rs.next()) {
 				int id = rs.getInt(1);
-				String name = rs.getString(2);
-				String phone = rs.getString(3);
-				String address = rs.getString(4);
-				String email = rs.getString(5);
-				String url = rs.getString(6);
+				String title = rs.getString(2);
+				int recordsperimage = rs.getInt(3);
+				int firstycoord = rs.getInt(4);
+				int recordheight = rs.getInt(5);
 
-				result.add(new Contact(id, name, phone, address, email, url));
+				result.add(new Project(id, title, recordsperimage, firstycoord, recordheight));
 			}
 		}
 		catch (SQLException e) {
 			DatabaseException serverEx = new DatabaseException(e.getMessage(), e);
-			
-			logger.throwing("server.database.Contacts", "getAll", serverEx);
 			
 			throw serverEx;
 		}		
@@ -71,10 +60,17 @@ private static Logger logger;
 			Database.safeClose(rs);
 			Database.safeClose(stmt);
 		}
-
-		logger.exiting("server.database.Contacts", "getAll");
 		
 		return result;	
+	}
+	/**
+	 * Gets a Project by its ID
+	 * @param id
+	 * @return project
+	 */
+	public Project getProjectByID(int id){
+		
+		return null;
 	}
 	
 	/**

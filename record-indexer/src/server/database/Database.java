@@ -1,6 +1,8 @@
 package server.database;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,17 +11,23 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Logger;
 
+import server.database.access.*;
+
 public class Database {
+	
+	private UserAccess useraccess;
+	private RecordAccess recordaccess;
+	private ProjectAccess projectaccess;
+	private InputValAccess inputvalaccess;
+	private FieldAccess fieldaccess;
+	private BatchAccess batchaccess;
+	
+	
 	private static final String DATABASE_DIRECTORY = "database";
-	private static final String DATABASE_FILE = "contactmanager.sqlite";
+	private static final String DATABASE_FILE = "Indexer.sqlite";
 	private static final String DATABASE_URL = "jdbc:sqlite:" + DATABASE_DIRECTORY +
 												File.separator + DATABASE_FILE;
-
-	private static Logger logger;
 	
-	static {
-		logger = Logger.getLogger("contactmanager");
-	}
 
 	public static void initialize() throws DatabaseException {
 		try {
@@ -30,22 +38,57 @@ public class Database {
 			
 			DatabaseException serverEx = new DatabaseException("Could not load database driver", e);
 			
-			logger.throwing("server.database.Database", "initialize", serverEx);
+			//logger.throwing("server.database.Database", "initialize", serverEx);
 
 			throw serverEx; 
 		}
 	}
 
-	private DatabaseAccessObj contactsDAO;
+
 	private Connection connection;
 	
 	public Database() {
-		contactsDAO = new DatabaseAccessObj(this);
 		connection = null;
+		useraccess = new UserAccess(this);
+		recordaccess = new RecordAccess(this);
+		projectaccess= new ProjectAccess(this);
+		inputvalaccess = new InputValAccess(this);
+		fieldaccess = new FieldAccess(this);
+		batchaccess = new BatchAccess(this);
 	}
 	
-	public DatabaseAccessObj getContactsDAO() {
-		return contactsDAO;
+
+	public UserAccess getUserAccess(){
+		return useraccess;
+	}
+	public RecordAccess getRecordAccess(){
+		return recordaccess;
+	}
+	public ProjectAccess getProjectAccess(){
+		return projectaccess;
+	}
+	public InputValAccess getInputValAccess(){
+		return inputvalaccess;
+	}
+	public FieldAccess getFieldAccess(){
+		return fieldaccess;
+	}
+	public BatchAccess getBatchAccess(){
+		return batchaccess;
+	}
+	
+	
+	public void deleteData(){
+		 File to = new File("Database" + File.separator + "Indexer.sqlite");
+	        File from = new File("Database" + File.separator + "blankIndexer.sqlite");
+
+	        to.delete();
+
+	        try{
+	            Files.copy(from.toPath(), to.toPath());
+	        }catch(IOException e){
+	            //e.printStackTrace();
+	        }
 	}
 	
 	public Connection getConnection() {
