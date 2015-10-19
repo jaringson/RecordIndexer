@@ -3,6 +3,7 @@ package server.database.access;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -32,7 +33,7 @@ private static Logger logger;
 	 * @return An ArrayList of Project Objects if not failed, null otherwise.
 	 * @throws DatabaseException 
 	 */
-	public ArrayList<Project> getProjects() throws DatabaseException{
+	public ArrayList<Project> getAllProjects() throws DatabaseException{
 		ArrayList<Project> result = new ArrayList<Project>();
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -77,8 +78,37 @@ private static Logger logger;
 	 * 
 	 * @param newProject
 	 * @return the new project that was added
+	 * @throws DatabaseException 
 	 */
-	public Project addProject(Project newProject){
+	public Project addProject(Project newProject) throws DatabaseException{
+		PreparedStatement stmt = null;
+		ResultSet keyRS = null;		
+		try {
+			String query = "insert into projects (title, recordsperimage, firstycoord, recordheight) values (?, ?, ?, ?)";   
+			stmt = db.getConnection().prepareStatement(query);
+			stmt.setString(1, newProject.getTitle());
+			stmt.setInt(2, newProject.getRecordsperimage());
+			stmt.setInt(3, newProject.getFirstycoordinate());
+			stmt.setInt(4, newProject.getRecordheight());
+			
+			if (stmt.executeUpdate() == 1) {
+				Statement keyStmt = db.getConnection().createStatement();
+				keyRS = keyStmt.executeQuery("select last_insert_rowid()");
+				keyRS.next();
+				int id = keyRS.getInt(1);
+				newProject.setId(id);
+			}
+			else {
+				throw new DatabaseException("Could not insert project");
+			}
+		}
+		catch (SQLException e) {
+			throw new DatabaseException("Could not insert project", e);
+		}
+		finally {
+			Database.safeClose(stmt);
+			Database.safeClose(keyRS);
+		}
 		return newProject;
 		
 	}
@@ -86,8 +116,47 @@ private static Logger logger;
 	/**
 	 * Updates a project
 	 * @param project
+	 * @throws DatabaseException 
 	 */
-	public void updateProject(Project project){
-		
+	public void updateProject(Project project) throws DatabaseException{
+		PreparedStatement stmt = null;
+		try {
+			String query = "update projects set title = ?, recordsperimage = ?, firstycoord= ?, recordheight= ? where id = ?";
+			stmt = db.getConnection().prepareStatement(query);
+			stmt.setString(1, project.getTitle());
+			stmt.setInt(2, project.getRecordsperimage());
+			stmt.setInt(3, project.getFirstycoordinate());
+			stmt.setInt(4, project.getRecordheight());
+			
+			
+			stmt.setInt(5, project.getId());
+			if (stmt.executeUpdate() != 1) {
+				throw new DatabaseException("Could not update project");
+			}
+		}
+		catch (SQLException e) {
+			throw new DatabaseException("Could not update project", e);
+		}
+		finally {
+			Database.safeClose(stmt);
+		}
+	}
+	
+	public void delete(Project project) throws DatabaseException{
+		PreparedStatement stmt = null;
+		try {
+			String query = "delete from projects where id = ?";
+			stmt = db.getConnection().prepareStatement(query);
+			stmt.setInt(1, project.getId());
+			if (stmt.executeUpdate() != 1) {
+				throw new DatabaseException("Could not delete project");
+			}
+		}
+		catch (SQLException e) {
+			throw new DatabaseException("Could not delete project", e);
+		}
+		finally {
+			Database.safeClose(stmt);
+		}
 	}
 }

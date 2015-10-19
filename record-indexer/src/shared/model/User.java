@@ -29,7 +29,8 @@ public class User {
 		this.indexrecords = indexrecords;
 		this.curBatch = curBatch;
 	}
-	/*public User() {
+	
+	public User() {
 		this.id = 0;
 		this.username = null;
 		this.password = null;
@@ -38,7 +39,7 @@ public class User {
 		this.email = null;
 		this.indexrecords = 0;
 		this.curBatch = 0;
-	}*/
+	}
 	public String getEmail() {
 		return email;
 	}

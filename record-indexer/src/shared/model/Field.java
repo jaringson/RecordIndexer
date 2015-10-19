@@ -19,6 +19,13 @@ public class Field {
 	private int width;
 	private String helphtml;
 	private String knowndata;
+	public int getColumnnumber() {
+		return columnnumber;
+	}
+	public void setColumnnumber(int columnnumber) {
+		this.columnnumber = columnnumber;
+	}
+	private int columnnumber;
 	
 	public Field(Element item) {
 		title = DataImporter.getValue((Element)item.getElementsByTagName("title").item(0));

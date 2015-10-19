@@ -17,10 +17,26 @@ public class Batch {
 	private int projectid;
 	private String file;
 	boolean complete;
+	boolean available;
+	boolean checkedout;
 	
-//	public Batch(Element item) {
+	
+	//	public Batch(Element item) {
 //		file = Integer.parseInt(DataImporter.getValue((Element)projectElement.getElementsByTagName("firstycoord").item(0)));
 //	}
+	public boolean isAvailable() {
+		return available;
+	}
+	public void setAvailable(boolean available) {
+		this.available = available;
+	}
+	public boolean isCheckedout() {
+		return checkedout;
+	}
+	public void setCheckedout(boolean checkedout) {
+		this.checkedout = checkedout;
+	}
+	
 	public int getId() {
 		return id;
 	}

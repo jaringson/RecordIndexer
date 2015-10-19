@@ -33,7 +33,6 @@ public class Project {
 	
 	public Project(int id, String title, int recordsperimage,
 			int firstycoordinate, int recordheight) {
-		super();
 		this.id = id;
 		this.title = title;
 		this.recordsperimage = recordsperimage;

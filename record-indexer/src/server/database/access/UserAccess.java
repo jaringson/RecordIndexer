@@ -37,22 +37,23 @@ public class UserAccess {
 			stmt.setString(2, password);
 			rs = stmt.executeQuery();
 			if (rs.next()) {
+				user = new User();
 				user.setId(rs.getInt(1));
 				user.setUsername(rs.getString(2));
 				user.setPassword(rs.getString(3));
 				user.setFirstname(rs.getString(4));
 				user.setLastname(rs.getString(5));
 				user.setEmail(rs.getString(6));
-				user.setEmail(rs.getString(7));
-				user.setIndexrecords(rs.getInt(8));
-				user.setCurBatch(rs.getInt(9));
+			
+				user.setIndexrecords(rs.getInt(7));
+				user.setCurBatch(rs.getInt(8));
 			}
 			else {
-				throw new DatabaseException("Could not insert contact");
+				throw new DatabaseException("Could not find user");
 			}
 		}
 		catch (SQLException e) {
-			throw new DatabaseException("Could not insert contact", e);
+			throw new DatabaseException("Could not find user", e);
 		}
 		finally {
 			Database.safeClose(stmt);
@@ -129,11 +130,11 @@ public class UserAccess {
 				newUser.setId(id);
 			}
 			else {
-				throw new DatabaseException("Could not insert contact");
+				throw new DatabaseException("Could not insert user");
 			}
 		}
 		catch (SQLException e) {
-			throw new DatabaseException("Could not insert contact", e);
+			throw new DatabaseException("Could not insert user", e);
 		}
 		finally {
 			Database.safeClose(stmt);
@@ -163,11 +164,11 @@ public class UserAccess {
 			
 			stmt.setInt(8, user.getId());
 			if (stmt.executeUpdate() != 1) {
-				throw new DatabaseException("Could not update contact");
+				throw new DatabaseException("Could not update user");
 			}
 		}
 		catch (SQLException e) {
-			throw new DatabaseException("Could not update contact", e);
+			throw new DatabaseException("Could not update user", e);
 		}
 		finally {
 			Database.safeClose(stmt);
@@ -182,19 +183,36 @@ public class UserAccess {
 	public void updateCurBatch(User user) throws DatabaseException{
 		PreparedStatement stmt = null;
 		try {
-			String query = "update users set indexrecords= ?, cruBatch_id= ? where id = ?";
+			String query = "update users set indexrecords= ?, curBatch_id= ? where id = ?";
 			stmt = db.getConnection().prepareStatement(query);
-			
+
 			stmt.setInt(1, user.getIndexrecords());
 			stmt.setInt(2, user.getCurBatch());
-			
 			stmt.setInt(3, user.getId());
 			if (stmt.executeUpdate() != 1) {
-				throw new DatabaseException("Could not update contact");
+				throw new DatabaseException("Could not update user");
 			}
 		}
 		catch (SQLException e) {
-			throw new DatabaseException("Could not update contact", e);
+			throw new DatabaseException("Could not update user", e);
+		}
+		finally {
+			Database.safeClose(stmt);
+		}
+	}
+	
+	public void delete(User user) throws DatabaseException{
+		PreparedStatement stmt = null;
+		try {
+			String query = "delete from users where id = ?";
+			stmt = db.getConnection().prepareStatement(query);
+			stmt.setInt(1, user.getId());
+			if (stmt.executeUpdate() != 1) {
+				throw new DatabaseException("Could not delete user");
+			}
+		}
+		catch (SQLException e) {
+			throw new DatabaseException("Could not delete user", e);
 		}
 		finally {
 			Database.safeClose(stmt);
