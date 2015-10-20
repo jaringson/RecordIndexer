@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 import server.database.Database;
 import server.database.DatabaseException;
-import shared.model.*;
+import shared.model.Project;
 
 public class ProjectAccess {
 	
@@ -68,10 +68,39 @@ private static Logger logger;
 	 * Gets a Project by its ID
 	 * @param id
 	 * @return project
+	 * @throws DatabaseException 
 	 */
-	public Project getProjectByID(int id){
+	public Project getProjectByID(int id) throws DatabaseException{
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		Project project = null;
+		try {
+			String query = "select * from projects where id = ?";
+			stmt = db.getConnection().prepareStatement(query);
+			stmt.setInt(1, id);
 		
-		return null;
+			rs = stmt.executeQuery();
+			if (rs.next()) {
+				project = new Project();
+				project.setId(rs.getInt(1));
+				project.setTitle(rs.getString(2));
+				project.setRecordsperimage(rs.getInt(3));
+				project.setFirstycoordinate(rs.getInt(4));
+				project.setRecordheight(rs.getInt(5));
+				
+			}
+			else {
+				throw new DatabaseException("Could not retrieve project");
+			}
+		}
+		catch (SQLException e) {
+			throw new DatabaseException("Could not retrieve project", e);
+		}
+		finally {
+			Database.safeClose(stmt);
+			Database.safeClose(rs);
+		}
+		return project;
 	}
 	
 	/**

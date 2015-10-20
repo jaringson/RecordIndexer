@@ -132,6 +132,29 @@ public class ProjectsAccessTest {
 		
 		assertTrue(foundBob && foundAmy);
 	}
+	
+	@Test
+	public void testGetProjectsByID() throws DatabaseException{
+		Project bob = new Project(-1, "Draft Records", 3,2,5);
+		Project amy = new Project(-1, "1900 Census", 15, 18,10);
+		
+		dbProject.addProject(bob);
+		dbProject.addProject(amy);
+		
+		List<Project> all = dbProject.getAllProjects();
+		assertEquals(2, all.size());
+		
+		Project newbob = dbProject.getProjectByID(1);
+		Project newamy = dbProject.getProjectByID(2);
+		
+		boolean foundBob = false;
+		boolean foundAmy = false;
+		
+		foundBob = areEqual(newbob, bob, false);
+		foundAmy = areEqual(newamy, amy, false);
+		
+		assertTrue(foundBob && foundAmy);
+	}
 
 	@Test
 	public void testDelete() throws DatabaseException {

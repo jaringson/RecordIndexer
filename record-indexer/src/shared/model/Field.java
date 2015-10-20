@@ -14,26 +14,38 @@ import server.importer.DataImporter;
 
 public class Field {
 	private int id;
+	int project_id;
+	int field_number;
 	private String title;
 	private int xcoord;
 	private int width;
 	private String helphtml;
 	private String knowndata;
+	private int columnnumber;
+	
+	
+	public Field(int id, int project_id, int field_number, String title,
+			int xcoord, int width, String helphtml, String knowndata,
+			int columnnumber) {
+		super();
+		this.id = id;
+		this.project_id = project_id;
+		this.field_number = field_number;
+		this.title = title;
+		this.xcoord = xcoord;
+		this.width = width;
+		this.helphtml = helphtml;
+		this.knowndata = knowndata;
+		this.columnnumber = columnnumber;
+	}
+	
 	public int getColumnnumber() {
 		return columnnumber;
 	}
 	public void setColumnnumber(int columnnumber) {
 		this.columnnumber = columnnumber;
 	}
-	private int columnnumber;
 	
-	public Field(Element item) {
-		title = DataImporter.getValue((Element)item.getElementsByTagName("title").item(0));
-		xcoord = Integer.parseInt(DataImporter.getValue((Element)item.getElementsByTagName("xcoord").item(0)));
-		width = Integer.parseInt(DataImporter.getValue((Element)item.getElementsByTagName("width").item(0)));
-		helphtml = DataImporter.getValue((Element)item.getElementsByTagName("helphtml").item(0));
-		knowndata = DataImporter.getValue((Element)item.getElementsByTagName("knowndata").item(0));
-	}
 	public int getId() {
 		return id;
 	}

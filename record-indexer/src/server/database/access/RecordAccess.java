@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import server.database.Database;
 import server.database.DatabaseException;
 import shared.model.Record;
-import shared.model.User;
 
 public class RecordAccess {
 	
@@ -24,7 +23,7 @@ public class RecordAccess {
 	 * @return a list of Records
 	 * @throws DatabaseException 
 	 */
-	public ArrayList<Record> getRecords() throws DatabaseException{
+	public ArrayList<Record> getAllRecords() throws DatabaseException{
 		ArrayList<Record> result = new ArrayList<Record>();
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -61,28 +60,28 @@ public class RecordAccess {
 	 */
 	public Record getRecordByBatch(int batch_id) throws DatabaseException{
 		
-		
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		Record record = null;
 		try {
-			String query = "select * from users where batch_id = ?";
+			String query = "select * from records where batch_id = ?";
 			stmt = db.getConnection().prepareStatement(query);
 			stmt.setInt(1, batch_id);
 		
 			rs = stmt.executeQuery();
 			if (rs.next()) {
+				record = new Record();
 				record.setId(rs.getInt(1));
 				record.setBatch_id(rs.getInt(2));
-				record.setRow_number(3);
+				record.setRow_number(rs.getInt(3));
 				
 			}
 			else {
-				throw new DatabaseException("Could not insert contact");
+				throw new DatabaseException("Could not retrieve record");
 			}
 		}
 		catch (SQLException e) {
-			throw new DatabaseException("Could not insert contact", e);
+			throw new DatabaseException("Could not retrieve record", e);
 		}
 		finally {
 			Database.safeClose(stmt);
@@ -114,11 +113,11 @@ public class RecordAccess {
 				newRecord.setId(id);
 			}
 			else {
-				throw new DatabaseException("Could not insert contact");
+				throw new DatabaseException("Could not insert record");
 			}
 		}
 		catch (SQLException e) {
-			throw new DatabaseException("Could not insert contact", e);
+			throw new DatabaseException("Could not insert record", e);
 		}
 		finally {
 			Database.safeClose(stmt);
@@ -136,20 +135,39 @@ public class RecordAccess {
 		PreparedStatement stmt = null;
 		try {
 			String query = "update records set batch_id = ?, row_number= ? where id = ?";
+			stmt = db.getConnection().prepareStatement(query);
+			stmt.setInt(1, record.getBatch_id());
+			stmt.setInt(2, record.getRow_number());
 			
-			stmt.setInt(6, record.getBatch_id());
-			stmt.setInt(7, record.getRow_number());
-			
-			stmt.setInt(8, record.getId());
+			stmt.setInt(3, record.getId());
 			if (stmt.executeUpdate() != 1) {
-				throw new DatabaseException("Could not update contact");
+				throw new DatabaseException("Could not update record");
 			}
 		}
 		catch (SQLException e) {
-			throw new DatabaseException("Could not update contact", e);
+			throw new DatabaseException("Could not update record", e);
 		}
 		finally {
 			Database.safeClose(stmt);
 		}
 	}
+	
+	public void delete(Record record) throws DatabaseException{
+		PreparedStatement stmt = null;
+		try {
+			String query = "delete from records where id = ?";
+			stmt = db.getConnection().prepareStatement(query);
+			stmt.setInt(1, record.getId());
+			if (stmt.executeUpdate() != 1) {
+				throw new DatabaseException("Could not delete record");
+			}
+		}
+		catch (SQLException e) {
+			throw new DatabaseException("Could not delete record", e);
+		}
+		finally {
+			Database.safeClose(stmt);
+		}
+	}
+	
 }

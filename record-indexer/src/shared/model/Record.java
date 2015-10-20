@@ -13,6 +13,9 @@ public class Record {
 	private int batch_id;
 	private int row_number;
 	
+	public Record(){
+		
+	}
 	
 	public Record(int id, int batch_id, int row_number) {
 		super();
