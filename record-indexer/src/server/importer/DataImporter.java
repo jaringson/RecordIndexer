@@ -21,11 +21,18 @@ import shared.model.*;
 
 
 public class DataImporter {
-	private static Database database = new Database();
+	
+	
+	private static Database database;
+	
+	private void create(String sql){
+		
+	}
 	
 	public static void main(String[] args) {	
 		try{
-			database.deleteData();
+			Database.initialize();
+			database = new Database();
 			database.startTransaction();
 			// When in conflict use the class from org.w3c.dom.
 			// Examples: Document, Element, Node, NodeList
@@ -36,8 +43,8 @@ public class DataImporter {
 			//optional, but recommended. Read this
 			// http://stackoverflow.com/questions/13786607/normalization-in-domparsing-with-java-how-does-it-work
 			doc.getDocumentElement().normalize();
-			//parseUsers(doc.getElementsByTagName("user"));
-            //parseProjects(doc.getElementsByTagName("project"));
+			parseUsers(doc.getElementsByTagName("user"));
+            parseProjects(doc.getElementsByTagName("project"));
             database.endTransaction(true);
 			
 			
@@ -56,7 +63,7 @@ public class DataImporter {
 		
 	}
 		
-	private static void parseProjects(NodeList projectList) {
+	private static void parseProjects(NodeList projectList) throws DatabaseException {
 		 for(int i =0;i<projectList.getLength();i++){
 	            Element projElem = (Element) projectList.item(i);
 	            String title = projElem.getElementsByTagName("title").item(0).getTextContent();
@@ -76,22 +83,65 @@ public class DataImporter {
 	        }
 	}
 	
-	private static void parseUsers(NodeList elementsByTagName) {
-		// TODO Auto-generated method stub
-		
+	private static void parseUsers(NodeList userList) throws DatabaseException {
+		for(int i =0;i<userList.getLength();i++){
+            Element userElem = (Element) userList.item(i);
+            String username = userElem.getElementsByTagName("username").item(0).getTextContent();
+            String password = userElem.getElementsByTagName("password").item(0).getTextContent();
+            String firstname = userElem.getElementsByTagName("firstname").item(0).getTextContent();
+            String lastname = userElem.getElementsByTagName("lastname").item(0).getTextContent();
+            String email = userElem.getElementsByTagName("email").item(0).getTextContent();
+            String indexedrecords = userElem.getElementsByTagName("indexedrecords").item(0).getTextContent();
+
+            User user = new User();
+            user.setUsername(username);
+            user.setPassword(password);
+            user.setFirstname(firstname);
+            user.setLastname(lastname);
+            user.setEmail(email);
+            user.setIndexrecords(Integer.parseInt(indexedrecords));
+            
+            int projectId = database.getUserAccess().addUser(user).getId();
+
+            ArrayList<Field> fields = parseFields(userElem.getElementsByTagName("field"),projectId);
+            parseBatches(userElem.getElementsByTagName("batches"),projectId,fields);
+        }
 	}
 
-	private static void parseBatches(NodeList elementsByTagName, int projectId, ArrayList<Field> fields) {
-		
+	private static void parseBatches(NodeList batchList, int projectId, ArrayList<Field> fields) {
+		for(int i =0;i<batchList.getLength();i++){
+			Element batchElem = (Element) batchList.item(i);
+			String title = batchElem.getElementsByTagName("title").item(0).getTextContent();
+	        String xcoord = batchElem.getElementsByTagName("xcoord").item(0).getTextContent();
+	        String width = batchElem.getElementsByTagName("width").item(0).getTextContent();
+	        String helphtml = batchElem.getElementsByTagName("helphtml").item(0).getTextContent();
+	        String knowndata = batchElem.getElementsByTagName("knowndata").item(0).getTextContent();
+	        
+	        Batch batch = new Batch();
+	        
+	         
+		}
 	}
 
-	private static ArrayList<Field> parseFields(NodeList elementsByTagName,int projectId) {
+	private static ArrayList<Field> parseFields(NodeList fieldList,int projectId) {
+		for(int i =0;i<fieldList.getLength();i++){
+			Element fieldElem = (Element) fieldList.item(i);
+			String title = fieldElem.getElementsByTagName("title").item(0).getTextContent();
+	        String xcoord = fieldElem.getElementsByTagName("xcoord").item(0).getTextContent();
+	        String width = fieldElem.getElementsByTagName("width").item(0).getTextContent();
+	        String helphtml = fieldElem.getElementsByTagName("helphtml").item(0).getTextContent();
+	        String knowndata = fieldElem.getElementsByTagName("knowndata").item(0).getTextContent();
+	        
+	        Batch batch = new Batch();
+	        
+	         
+		}
 		return null;
 	}
 
 
 
-	public static ArrayList<Element> getChildElements(Node node) {
+	/*public static ArrayList<Element> getChildElements(Node node) {
 		ArrayList<Element> result = new ArrayList<Element>();
 		NodeList children = node.getChildNodes();
 		for(int i = 0; i < children.getLength(); i++) {
@@ -107,6 +157,6 @@ public class DataImporter {
 		Node child = element.getFirstChild();
 		result = child.getNodeValue();
 		return result;
-	}
+	}*/
 }
 
