@@ -39,6 +39,22 @@ public class Field {
 		this.columnnumber = columnnumber;
 	}
 	
+	public int getProject_id() {
+		return project_id;
+	}
+
+	public void setProject_id(int project_id) {
+		this.project_id = project_id;
+	}
+
+	public int getField_number() {
+		return field_number;
+	}
+
+	public void setField_number(int field_number) {
+		this.field_number = field_number;
+	}
+	
 	public int getColumnnumber() {
 		return columnnumber;
 	}

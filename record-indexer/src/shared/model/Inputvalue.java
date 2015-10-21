@@ -8,11 +8,19 @@ package shared.model;
  *
  */
 
-public class Inputvalues {
+public class Inputvalue {
 	private int id;
 	private int record_id;
 	private int field_id;
 	private String inputvalue;
+	
+	public Inputvalue(int id, int record_id, int field_id, String inputvalue) {
+		super();
+		this.id = id;
+		this.record_id = record_id;
+		this.field_id = field_id;
+		this.inputvalue = inputvalue;
+	}
 	public int getId() {
 		return id;
 	}

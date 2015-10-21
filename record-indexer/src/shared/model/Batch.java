@@ -21,9 +21,20 @@ public class Batch {
 	boolean checkedout;
 	
 	
-	//	public Batch(Element item) {
-//		file = Integer.parseInt(DataImporter.getValue((Element)projectElement.getElementsByTagName("firstycoord").item(0)));
-//	}
+
+	public Batch(int id, int projectid, String file, boolean complete,
+			boolean available, boolean checkedout) {
+		super();
+		this.id = id;
+		this.projectid = projectid;
+		this.file = file;
+		this.complete = complete;
+		this.available = available;
+		this.checkedout = checkedout;
+	}
+	public Batch() {
+		// TODO Auto-generated constructor stub
+	}
 	public boolean isAvailable() {
 		return available;
 	}
