@@ -1,6 +1,9 @@
 package server;
 
 import org.junit.* ;
+
+import server.DBAccessTests.*;
+import server.database.DatabaseException;
 import static org.junit.Assert.* ;
 
 public class ServerUnitTests {
@@ -22,13 +25,11 @@ public class ServerUnitTests {
 		assertFalse(false);
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws DatabaseException {
+		BatchAccessTest batchTest = new BatchAccessTest();
 		
-		String[] testClasses = new String[] {
-				"server.ServerUnitTests"
-		};
-
-		org.junit.runner.JUnitCore.main(testClasses);
+		FieldAccessTest fieldTest = new FieldAccessTest();
+		
 	}
 	
 }

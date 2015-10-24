@@ -21,6 +21,9 @@ public class Inputvalue {
 		this.field_id = field_id;
 		this.inputvalue = inputvalue;
 	}
+	public Inputvalue() {
+		// TODO Auto-generated constructor stub
+	}
 	public int getId() {
 		return id;
 	}

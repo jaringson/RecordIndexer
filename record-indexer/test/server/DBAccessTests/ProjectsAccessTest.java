@@ -144,8 +144,8 @@ public class ProjectsAccessTest {
 		List<Project> all = dbProject.getAllProjects();
 		assertEquals(2, all.size());
 		
-		Project newbob = dbProject.getProjectByID(1);
-		Project newamy = dbProject.getProjectByID(2);
+		Project newbob = dbProject.getProjectByID(bob.getId());
+		Project newamy = dbProject.getProjectByID(amy.getId());
 		
 		boolean foundBob = false;
 		boolean foundAmy = false;

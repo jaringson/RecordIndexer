@@ -45,9 +45,9 @@ public class ClientCommunicator {
 	
 	/** Returns Shared Communicator Class: DownloadImage_Result
 	 * @return DownloadImage_Result
-	 * @param DownloadImage_Params
+	 * @param DownloadBatch_Params
 	 */
-	public DownloadImage_Result downloadImage(DownloadImage_Params down){
+	public DownloadBatch_Result downloadImage(DownloadBatch_Params down){
 		return null;
 		
 	}

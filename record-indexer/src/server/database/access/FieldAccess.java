@@ -35,15 +35,14 @@ public class FieldAccess {
 			while (rs.next()) {
 				int id = rs.getInt(1);
 				int project_id = rs.getInt(2);
-				int field_number = rs.getInt(3);
-				String title = rs.getString(4);
-				int xcoord = rs.getInt(5);
-				int width= rs.getInt(6);
-				String helpthtml= rs.getString(7);
-				String knowndata = rs.getString(8);
-				int columnnumber= rs.getInt(9);
+				String title = rs.getString(3);
+				int xcoord = rs.getInt(4);
+				int width= rs.getInt(5);
+				String helpthtml= rs.getString(6);
+				String knowndata = rs.getString(7);
+				int columnnumber= rs.getInt(8);
 
-				result.add(new Field(id, project_id, field_number,title,xcoord,width,helpthtml,knowndata, columnnumber));
+				result.add(new Field(id, project_id, title,xcoord,width,helpthtml,knowndata, columnnumber));
 			}
 		}
 		catch (SQLException e) {
@@ -76,15 +75,14 @@ public class FieldAccess {
 			while (rs.next()) {
 				int id = rs.getInt(1);
 				int project_id = rs.getInt(2);
-				int field_number = rs.getInt(3);
-				String title = rs.getString(4);
-				int xcoord = rs.getInt(5);
-				int width= rs.getInt(6);
-				String helpthtml= rs.getString(7);
-				String knowndata = rs.getString(8);
-				int columnnumber= rs.getInt(9);
+				String title = rs.getString(3);
+				int xcoord = rs.getInt(4);
+				int width= rs.getInt(5);
+				String helpthtml= rs.getString(6);
+				String knowndata = rs.getString(7);
+				int columnnumber= rs.getInt(8);
 
-				result.add(new Field(id, project_id, field_number,title,xcoord,width,helpthtml,knowndata, columnnumber));
+				result.add(new Field(id, project_id, title,xcoord,width,helpthtml,knowndata, columnnumber));
 			}
 		}
 		catch (SQLException e) {
@@ -110,16 +108,15 @@ public class FieldAccess {
 		PreparedStatement stmt = null;
 		ResultSet keyRS = null;		
 		try {
-			String query = "insert into fields (project_id,field_number,title,xcoord,width,helphtml,knowndata,columnnumber) values (?, ?, ?, ?, ?, ?, ?,?)";
+			String query = "insert into fields (project_id,title,xcoord,width,helphtml,knowndata,columnnumber) values (?, ?, ?, ?, ?, ?, ?)";
 			stmt = db.getConnection().prepareStatement(query);
 			stmt.setInt(1, newField.getProject_id());
-			stmt.setInt(2, newField.getField_number());
-			stmt.setString(3, newField.getTitle());
-			stmt.setInt(4, newField.getXcoord());
-			stmt.setInt(5, newField.getWidth());
-			stmt.setString(6, newField.getHelphtml());
-			stmt.setString(7, newField.getKnowndata());
-			stmt.setInt(8, newField.getColumnnumber());
+			stmt.setString(2, newField.getTitle());
+			stmt.setInt(3, newField.getXcoord());
+			stmt.setInt(4, newField.getWidth());
+			stmt.setString(5, newField.getHelphtml());
+			stmt.setString(6, newField.getKnowndata());
+			stmt.setInt(7, newField.getColumnnumber());
 			if (stmt.executeUpdate() == 1) {
 				Statement keyStmt = db.getConnection().createStatement();
 				keyRS = keyStmt.executeQuery("select last_insert_rowid()");
@@ -149,18 +146,17 @@ public class FieldAccess {
 	public void updateField(Field field) throws DatabaseException{
 		PreparedStatement stmt = null;
 		try {
-			String query = "update fields set project_id=?,field_number=?,title=?,xcoord=?,width=?,helphtml=?,knowndata=?,columnnumber=? where id = ?";
+			String query = "update fields set project_id=?,title=?,xcoord=?,width=?,helphtml=?,knowndata=?,columnnumber=? where id = ?";
 			stmt = db.getConnection().prepareStatement(query);
 			stmt.setInt(1, field.getProject_id());
-			stmt.setInt(2, field.getField_number());
-			stmt.setString(3, field.getTitle());
-			stmt.setInt(4, field.getXcoord());
-			stmt.setInt(5, field.getWidth());
-			stmt.setString(6, field.getHelphtml());
-			stmt.setString(7, field.getKnowndata());
-			stmt.setInt(8, field.getColumnnumber());
-
-			stmt.setInt(9, field.getId());
+			stmt.setString(2, field.getTitle());
+			stmt.setInt(3, field.getXcoord());
+			stmt.setInt(4, field.getWidth());
+			stmt.setString(5, field.getHelphtml());
+			stmt.setString(6, field.getKnowndata());
+			stmt.setInt(7, field.getColumnnumber());
+			
+			stmt.setInt(8, field.getId());
 			if (stmt.executeUpdate() != 1) {
 				throw new DatabaseException("Could not update field");
 			}

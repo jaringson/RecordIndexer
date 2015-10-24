@@ -64,8 +64,8 @@ public class FieldAccessTest {
 	}
 	@Test
 	public void testAdd() throws DatabaseException {
-		Field bob = new Field(-1,2,3, "Draft Records", 3,2,"google","interesting",5);
-		Field amy = new Field(-1,11,6, "Draft Records", 7,8,"Facebook","yeah",56);
+		Field bob = new Field(-1,2, "Draft Records", 3,2,"google","interesting",5);
+		Field amy = new Field(-1,11, "Draft Records", 7,8,"Facebook","yeah",56);
 		
 		dbField.addField(bob);
 		dbField.addField(amy);
@@ -93,14 +93,13 @@ public class FieldAccessTest {
 	@Test
 	public void testUpdate() throws DatabaseException {
 		
-		Field bob = new Field(-1,2,3, "Draft Records", 3,2,"google","interesting",5);
-		Field amy = new Field(-1,11,6, "1900 Census", 7,8,"Facebook","yeah",56);
+		Field bob = new Field(-1,2, "Draft Records", 3,2,"google","interesting",5);
+		Field amy = new Field(-1,11, "1900 Census", 7,8,"Facebook","yeah",56);
 		
 		dbField.addField(bob);
 		dbField.addField(amy);
 		
 		bob.setProject_id(13);
-		bob.setField_number(14);
 		bob.setTitle("title");
 		bob.setXcoord(15);
 		bob.setHelphtml("help!");
@@ -108,7 +107,6 @@ public class FieldAccessTest {
 		bob.setColumnnumber(16);
 		
 		amy.setProject_id(17);
-		amy.setField_number(18);
 		amy.setTitle("titlez");
 		amy.setXcoord(19);
 		amy.setHelphtml("helpz!");
@@ -139,9 +137,9 @@ public class FieldAccessTest {
 	
 	@Test
 	public void testGetProjectsByID() throws DatabaseException{
-		Field bob = new Field(-1,2,3, "Draft Records", 3,2,"google","interesting",5);
-		Field amy = new Field(-1,11,6, "1900 Census", 7,8,"Facebook","yeah",56);
-		Field carl = new Field(-1,2,14, "1880",15,16,"jaron","help",18);
+		Field bob = new Field(-1,2, "Draft Records", 3,2,"google","interesting",5);
+		Field amy = new Field(-1,11, "1900 Census", 7,8,"Facebook","yeah",56);
+		Field carl = new Field(-1,2, "1880",15,16,"jaron","help",18);
 		
 		dbField.addField(bob);
 		dbField.addField(amy);
@@ -160,8 +158,8 @@ public class FieldAccessTest {
 	@Test
 	public void testDelete() throws DatabaseException {
 		
-		Field bob = new Field(-1,2,3, "Draft Records", 3,2,"google","interesting",5);
-		Field amy = new Field(-1,11,6, "Draft Records", 7,8,"Facebook","yeah",56);
+		Field bob = new Field(-1,2,"Draft Records", 3,2,"google","interesting",5);
+		Field amy = new Field(-1,11, "Draft Records", 7,8,"Facebook","yeah",56);
 		
 		dbField.addField(bob);
 		dbField.addField(amy);
@@ -180,21 +178,21 @@ public class FieldAccessTest {
 	@Test(expected=DatabaseException.class)
 	public void testInvalidAdd() throws DatabaseException {
 		
-		Field invalidField = new Field(-1, 0 ,0,null,0,0,null,null,0);
+		Field invalidField = new Field(-1, 0 ,null,0,0,null,null,0);
 		dbField.addField(invalidField);
 	}
 	
 	@Test(expected=DatabaseException.class)
 	public void testInvalidUpdate() throws DatabaseException {
 		
-		Field invalidField = new Field(-1, 0 ,0,null,0,0,null,null,0);
+		Field invalidField = new Field(-1, 0,null,0,0,null,null,0);
 		dbField.updateField(invalidField);
 	}
 	
 	@Test(expected=DatabaseException.class)
 	public void testInvalidDelete() throws DatabaseException {
 		
-		Field invalidField = new Field(-1, 0 ,0,null,0,0,null,null,0);
+		Field invalidField = new Field(-1,0,null,0,0,null,null,0);
 		dbField.delete(invalidField);
 	}
 	
@@ -206,7 +204,6 @@ public class FieldAccessTest {
 			}
 		}	
 		return (safeEquals(a.getProject_id(), b.getProject_id()) &&
-				safeEquals(a.getField_number(), b.getField_number()) &&
 				safeEquals(a.getTitle(), b.getTitle()) &&
 				safeEquals(a.getXcoord(), b.getXcoord()) &&
 				safeEquals(a.getWidth(), b.getWidth()) &&

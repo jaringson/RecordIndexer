@@ -1,23 +1,18 @@
 package server.importer;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.io.*;
+import java.util.*;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.*;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import server.database.Database;
 import server.database.DatabaseException;
 import shared.model.*;
 
+import org.apache.commons.io.*;
 
 
 public class DataImporter {
@@ -31,25 +26,23 @@ public class DataImporter {
 	
 	public static void main(String[] args) {	
 		try{
+			copyfiles(args[0]);
+			
 			Database.initialize();
 			database = new Database();
 			database.startTransaction();
-			// When in conflict use the class from org.w3c.dom.
-			// Examples: Document, Element, Node, NodeList
+			database.recreateTables("database.sql");
+			
 			File xmlFile = new File(args[0]);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(xmlFile); //Can use URI instead of xmlFile
-			//optional, but recommended. Read this
-			// http://stackoverflow.com/questions/13786607/normalization-in-domparsing-with-java-how-does-it-work
+			Document doc = dBuilder.parse(xmlFile); 
+		
 			doc.getDocumentElement().normalize();
 			parseUsers(doc.getElementsByTagName("user"));
             parseProjects(doc.getElementsByTagName("project"));
             database.endTransaction(true);
 			
-			
-//			Element root = doc.getDocumentElement();
-//			IndexerData indexerData = new IndexerData(root);
 		}
 		catch(SAXException e){
             e.printStackTrace();
@@ -61,6 +54,14 @@ public class DataImporter {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	static void copyfiles(String xmlFilename) throws IOException{
+		File xmlFile = new File(xmlFilename);
+		File dest = new File("Records");
+		if(!xmlFile.getParentFile().getCanonicalPath().equals(dest.getCanonicalPath()))
+			FileUtils.deleteDirectory(dest);
+		FileUtils.copyDirectory(xmlFile.getParentFile(), dest);
 	}
 		
 	private static void parseProjects(NodeList projectList) throws DatabaseException {
@@ -79,7 +80,7 @@ public class DataImporter {
 	            int projectId = database.getProjectAccess().addProject(project).getId();
 
 	            ArrayList<Field> fields = parseFields(projElem.getElementsByTagName("field"),projectId);
-	            parseBatches(projElem.getElementsByTagName("image"),projectId,fields);
+	            parseBatches(projElem.getElementsByTagName("images"),projectId,fields);
 	        }
 	}
 	
@@ -101,62 +102,104 @@ public class DataImporter {
             user.setEmail(email);
             user.setIndexrecords(Integer.parseInt(indexedrecords));
             
-            int projectId = database.getUserAccess().addUser(user).getId();
-
-            ArrayList<Field> fields = parseFields(userElem.getElementsByTagName("field"),projectId);
-            parseBatches(userElem.getElementsByTagName("batches"),projectId,fields);
+            database.getUserAccess().addUser(user);
         }
 	}
 
-	private static void parseBatches(NodeList batchList, int projectId, ArrayList<Field> fields) {
+	private static void parseBatches(NodeList batchList, int projectId, ArrayList<Field> fields) throws DatabaseException {
 		for(int i =0;i<batchList.getLength();i++){
 			Element batchElem = (Element) batchList.item(i);
-			String title = batchElem.getElementsByTagName("title").item(0).getTextContent();
-	        String xcoord = batchElem.getElementsByTagName("xcoord").item(0).getTextContent();
-	        String width = batchElem.getElementsByTagName("width").item(0).getTextContent();
-	        String helphtml = batchElem.getElementsByTagName("helphtml").item(0).getTextContent();
-	        String knowndata = batchElem.getElementsByTagName("knowndata").item(0).getTextContent();
-	        
+			
+			String file = batchElem.getElementsByTagName("image").item(0).getTextContent();
+			int projectid = projectId;
+			Boolean complete = false;
+			Boolean available = false;
+			Boolean checkedout = false;
+			
 	        Batch batch = new Batch();
+	        batch.setFile(file);
+	        batch.setProjectid(projectid);
+	        batch.setComplete(complete);
+	        batch.setAvailable(available);
+	        batch.setCheckedout(checkedout);
 	        
-	         
+	        int batchId = database.getBatchAccess().addBatch(batch).getId();
+	        
+	        parseRecords(batchElem.getElementsByTagName("records"), batchId, fields);
 		}
 	}
 
-	private static ArrayList<Field> parseFields(NodeList fieldList,int projectId) {
+	private static void parseRecords(NodeList recordList, int batchId, ArrayList<Field> fields) throws DatabaseException {
+		for(int i =0;i<recordList.getLength();i++){
+			Element recordElem = (Element) recordList.item(i);
+			int batch_id = batchId;
+			int row_number = i;
+			
+			Record record = new Record();
+			record.setBatch_id(batch_id);
+			record.setRow_number(row_number);
+			int recordId = database.getRecordAccess().addRecord(record).getId();
+		
+			parseValues(recordElem.getElementsByTagName("values"),recordId,fields);
+		}
+	}
+
+	private static void parseValues(NodeList multivalueList, int recordId, ArrayList<Field> fields) throws DatabaseException {
+		for(int i =0;i<multivalueList.getLength();i++){
+			Element multivalueElem = (Element) multivalueList.item(i);
+			NodeList valueList = multivalueElem.getElementsByTagName("value");
+//			System.out.println(valueList.getLength());
+			for(int j = 0; j< valueList.getLength();j++){
+				Element valueElem = (Element)valueList.item(j);
+				String inputvalue = valueElem.getTextContent();
+				int record_id = recordId;
+				
+				Inputvalue value = new Inputvalue();
+				value.setInputvalue(inputvalue);
+				value.setRecord_id(record_id);
+				value.setField_id(fields.get(j).getId());
+				
+				database.getInputValAccess().addValue(value);
+//				System.out.println(fields.get(j).getId());
+//				System.out.println(inputvalue);
+//
+//				System.out.println("Press Any Key To Continue...");
+//		        new java.util.Scanner(System.in).nextLine();
+			}
+		}
+	}
+
+	private static ArrayList<Field> parseFields(NodeList fieldList,int projectId) throws DatabaseException {
+		
+		ArrayList<Field> fields = new ArrayList<Field>();
+		int columnnumber= 0;
 		for(int i =0;i<fieldList.getLength();i++){
 			Element fieldElem = (Element) fieldList.item(i);
+			int project_id = projectId;
+			columnnumber = i;
 			String title = fieldElem.getElementsByTagName("title").item(0).getTextContent();
 	        String xcoord = fieldElem.getElementsByTagName("xcoord").item(0).getTextContent();
 	        String width = fieldElem.getElementsByTagName("width").item(0).getTextContent();
 	        String helphtml = fieldElem.getElementsByTagName("helphtml").item(0).getTextContent();
-	        String knowndata = fieldElem.getElementsByTagName("knowndata").item(0).getTextContent();
+	        String knowndata = "";
+	        if(fieldElem.getElementsByTagName("knowndata").item(0) != null){
+	        	knowndata = fieldElem.getElementsByTagName("knowndata").item(0).getTextContent();
+	        }
+	    
+	        Field field = new Field();
+	        field.setProject_id(project_id);
+	        field.setTitle(title);
+	        field.setXcoord(Integer.parseInt(xcoord));
+	        field.setWidth(Integer.parseInt(width));
+	        field.setHelphtml(helphtml);
+	        field.setKnowndata(knowndata);
+	        field.setColumnnumber(columnnumber);
 	        
-	        Batch batch = new Batch();
-	        
-	         
+	        fields.add(field);
+	        database.getFieldAccess().addField(field);
 		}
-		return null;
+		return fields;
 	}
 
-
-
-	/*public static ArrayList<Element> getChildElements(Node node) {
-		ArrayList<Element> result = new ArrayList<Element>();
-		NodeList children = node.getChildNodes();
-		for(int i = 0; i < children.getLength(); i++) {
-		Node child = children.item(i);
-			if(child.getNodeType() == Node.ELEMENT_NODE){
-			result.add((Element)child);
-			}
-		}
-		return result;
-	}
-	public static String getValue(Element element) {
-		String result = "";
-		Node child = element.getFirstChild();
-		result = child.getNodeValue();
-		return result;
-	}*/
 }
 

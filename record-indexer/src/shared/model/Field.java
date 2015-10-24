@@ -15,7 +15,6 @@ import server.importer.DataImporter;
 public class Field {
 	private int id;
 	int project_id;
-	int field_number;
 	private String title;
 	private int xcoord;
 	private int width;
@@ -24,13 +23,12 @@ public class Field {
 	private int columnnumber;
 	
 	
-	public Field(int id, int project_id, int field_number, String title,
+	public Field(int id, int project_id, String title,
 			int xcoord, int width, String helphtml, String knowndata,
 			int columnnumber) {
 		super();
 		this.id = id;
 		this.project_id = project_id;
-		this.field_number = field_number;
 		this.title = title;
 		this.xcoord = xcoord;
 		this.width = width;
@@ -39,20 +37,15 @@ public class Field {
 		this.columnnumber = columnnumber;
 	}
 	
+	public Field() {
+	}
+
 	public int getProject_id() {
 		return project_id;
 	}
 
 	public void setProject_id(int project_id) {
 		this.project_id = project_id;
-	}
-
-	public int getField_number() {
-		return field_number;
-	}
-
-	public void setField_number(int field_number) {
-		this.field_number = field_number;
 	}
 	
 	public int getColumnnumber() {

@@ -1,6 +1,9 @@
 package server.database;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.sql.Connection;
@@ -9,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Scanner;
 import java.util.logging.Logger;
 
 import server.database.access.*;
@@ -78,17 +82,24 @@ public class Database {
 	}
 	
 	
-	public void deleteData(){
-		 File to = new File("Database" + File.separator + "Indexer.sqlite");
-	        File from = new File("Database" + File.separator + "blankIndexer.sqlite");
-
-	        to.delete();
-
-	        try{
-	            Files.copy(from.toPath(), to.toPath());
-	        }catch(IOException e){
-	            //e.printStackTrace();
-	        }
+	public void recreateTables(String file) throws DatabaseException, FileNotFoundException{
+		PreparedStatement stmt = null;
+		Scanner reader = new Scanner (new BufferedInputStream(new FileInputStream(file)));
+		//StringBuilder contents = new StringBuilder();
+		while(reader.hasNext())
+		{
+			try {
+				String query = reader.nextLine();
+				//System.out.println(query);
+				stmt = this.getConnection().prepareStatement(query);
+				stmt.executeUpdate();
+			}
+			catch (SQLException e) {
+				throw new DatabaseException("Could not retrieve batch", e);
+			}
+		}
+		reader.close();
+		
 	}
 	
 	public Connection getConnection() {

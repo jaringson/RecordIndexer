@@ -160,8 +160,8 @@ public class BatchAccessTest {
 		dbBatch.addBatch(bob);
 		dbBatch.addBatch(amy);
 		
-		Batch newbob = dbBatch.getBatchByID(1);
-		Batch newamy = dbBatch.getBatchByID(2);
+		Batch newbob = dbBatch.getBatchByID(bob.getId());
+		Batch newamy = dbBatch.getBatchByID(amy.getId());
 		
 
 		boolean foundBob = false;

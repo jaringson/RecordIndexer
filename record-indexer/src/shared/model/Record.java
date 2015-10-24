@@ -38,7 +38,7 @@ public class Record {
 	public int getBatch_id() {
 		return batch_id;
 	}
-	public void setBatch_id(int image_id) {
-		this.batch_id = image_id;
+	public void setBatch_id(int batch_id) {
+		this.batch_id = batch_id;
 	}
 }
