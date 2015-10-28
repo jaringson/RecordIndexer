@@ -2,7 +2,10 @@ package servertester.controllers;
 
 import java.util.*;
 
+import client.ClientCommunicator;
+import client.ClientException;
 import servertester.views.*;
+import shared.communication.*;
 
 public class Controller implements IController {
 
@@ -99,12 +102,66 @@ public class Controller implements IController {
 	}
 	
 	private void validateUser() {
+		String host = _view.getHost();
+		String port = _view.getPort();
+		String[] values = _view.getParameterValues();
+		String username = values[0];
+		String password = values[1];
+		ClientCommunicator cc = new ClientCommunicator();
+		ValidateUser_Params params = new ValidateUser_Params();
+		params.setPassword(password);
+		params.setUsername(username);
+		ValidateUser_Result result;
+		try {
+			result = cc.validateUser(params);
+		} catch (ClientException e) {
+			_view.setResponse("FAILED");
+			e.printStackTrace();
+			return;
+		}
+		_view.setResponse(result.toString());
 	}
 	
 	private void getProjects() {
+		String host = _view.getHost();
+		String port = _view.getPort();
+		String[] values = _view.getParameterValues();
+		String username = values[0];
+		String password = values[1];
+		ClientCommunicator cc = new ClientCommunicator();
+		GetProjects_Params params = new GetProjects_Params();
+		params.setPassword(password);
+		params.setUsername(username);
+		GetProjects_Result result;
+		try {
+			result = cc.getProjects(params);
+		} catch (ClientException e) {
+			_view.setResponse("FAILED");
+			e.printStackTrace();
+			return;
+		}
+		_view.setResponse(result.toString());
 	}
 	
 	private void getSampleImage() {
+		String host = _view.getHost();
+		String port = _view.getPort();
+		String[] values = _view.getParameterValues();
+		String username = values[0];
+		String password = values[1];
+		ClientCommunicator cc = new ClientCommunicator();
+		GetSampleImg_Params params = new GetSampleImg_Params();
+		params.setPassword(password);
+		params.setUsername(username);
+		GetSampleImg_Result result;
+		try {
+			result = cc.getSampleImage(params);
+		} catch (ClientException e) {
+			_view.setResponse("FAILED");
+			e.printStackTrace();
+			return;
+		}
+		_view.setResponse(result.toString());
 	}
 	
 	private void downloadBatch() {

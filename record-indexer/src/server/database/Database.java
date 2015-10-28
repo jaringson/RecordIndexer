@@ -4,8 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,7 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
 
 import server.database.access.*;
 
@@ -85,6 +84,7 @@ public class Database {
 	public void recreateTables(String file) throws DatabaseException, FileNotFoundException{
 		PreparedStatement stmt = null;
 		Scanner reader = new Scanner (new BufferedInputStream(new FileInputStream(file)));
+		
 		//StringBuilder contents = new StringBuilder();
 		while(reader.hasNext())
 		{
@@ -98,7 +98,9 @@ public class Database {
 				throw new DatabaseException("Could not retrieve batch", e);
 			}
 		}
+		
 		reader.close();
+		
 		
 	}
 	

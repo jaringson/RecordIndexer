@@ -1,6 +1,6 @@
 package shared.communication;
 
-import shared.model.User;
+
 
 /**
  * Contains an objects for Imputing Results of DownloadImage
@@ -8,24 +8,33 @@ import shared.model.User;
  *
  */
 public class DownloadBatch_Params {
-	private User user;
-	private int projectID;
 	
 	
 	public DownloadBatch_Params() {
-		user = null;
+		username = null;
+		password = null;
 		projectID =-1;
 	}
-	public User getUser() {
-		return user;
-	}
-	public void setUser(User user) {
-		this.user = user;
-	}
+	private String username;
+	private String password;
+	private int projectID;
+	
 	public int getProjectID() {
 		return projectID;
 	}
 	public void setProjectID(int projectID) {
 		this.projectID = projectID;
+	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }

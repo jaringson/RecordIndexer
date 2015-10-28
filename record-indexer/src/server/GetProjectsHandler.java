@@ -2,13 +2,11 @@ package server;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.util.*;
 
 import server.facade.ServerFacade;
 import shared.communication.GetProjects_Params;
 import shared.communication.GetProjects_Result;
-import shared.model.Project;
-import shared.model.User;
+
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -25,10 +23,9 @@ public class GetProjectsHandler implements HttpHandler{
 	public void handle(HttpExchange exchange) throws IOException {
 		
 		GetProjects_Params params = (GetProjects_Params)xmlStream.fromXML(exchange.getRequestBody());
-		User user = params.getUser();
-		List<Project> projects = new ArrayList<Project>();
+		GetProjects_Result result = new GetProjects_Result();
 		try {
-			projects = ServerFacade.getProjects(user);
+			result = ServerFacade.getProjects(params);
 		}
 		catch (ServerException e) {
            // logger.log(Level.SEVERE, e.getMessage(), e);
@@ -36,10 +33,6 @@ public class GetProjectsHandler implements HttpHandler{
 			return;
 		}
 		
-		exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, -1);
-		
-		GetProjects_Result result = new GetProjects_Result();
-		result.setProjects(projects);
 		
 		exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
 		xmlStream.toXML(result, exchange.getResponseBody());

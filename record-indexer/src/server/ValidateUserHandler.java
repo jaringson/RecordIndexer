@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import server.facade.ServerFacade;
 import shared.communication.ValidateUser_Result;
 import shared.communication.ValidateUser_Params;
-import shared.model.User;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -25,21 +24,15 @@ private Logger logger = Logger.getLogger("contactmanager");
 	public void handle(HttpExchange exchange) throws IOException {
 		
 		ValidateUser_Params params = (ValidateUser_Params)xmlStream.fromXML(exchange.getRequestBody());
-		User user = params.getUser();
-		
+		ValidateUser_Result result = new ValidateUser_Result();
 		try {
-			ServerFacade.validateUser(user.getUsername(), user.getPassword());
+			result = ServerFacade.validateUser(params);
 		}
 		catch (ServerException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
 			exchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, -1);
 			return;
 		}
-		
-		exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, -1);
-		
-		ValidateUser_Result result = new ValidateUser_Result();
-		result.setUser(user);
 		
 		exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
 		xmlStream.toXML(result, exchange.getResponseBody());

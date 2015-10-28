@@ -14,4 +14,10 @@ public class GetSampleImg_Result {
 	public void setFile(String file) {
 		this.file = file;
 	}
+	@Override
+	public String toString(){
+		StringBuilder ss = new StringBuilder();
+		ss.append(file+"\n");
+		return ss.toString();
+	}
 }

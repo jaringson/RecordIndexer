@@ -1,8 +1,5 @@
 package shared.model;
 
-import org.w3c.dom.Element;
-
-import server.importer.DataImporter;
 
 /**
  * Holds the information for the Field class.

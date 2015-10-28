@@ -17,4 +17,13 @@ public class GetProjects_Result {
 	public void setProjects(List<Project> projects) {
 		this.projects = projects;
 	}
+	@Override
+	public String toString(){
+		StringBuilder ss = new StringBuilder();
+		for(Project project: projects){
+			ss.append(project.getId() +"\n");
+			ss.append(project.getTitle()+"\n");
+		}
+		return ss.toString();
+	}
 }

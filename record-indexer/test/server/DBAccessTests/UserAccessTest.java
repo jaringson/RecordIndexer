@@ -177,10 +177,13 @@ public class UserAccessTest {
 		dbUser.addUser(bob);
 		dbUser.addUser(amy);
 		
+		@SuppressWarnings("unused")
 		User carl = new User(-1, "Carl White", "carl@indexer", "Carl",
 				"White", "amy@white.org", 15, 18);
 		
+		@SuppressWarnings("unused")
 		User u = dbUser.validateUser("Carl", "White");
+		
 	}
 	
 	@Test

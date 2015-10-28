@@ -20,9 +20,6 @@ public class DataImporter {
 	
 	private static Database database;
 	
-	private void create(String sql){
-		
-	}
 	
 	public static void main(String[] args) {	
 		try{
@@ -110,7 +107,7 @@ public class DataImporter {
 		for(int i =0;i<batchList.getLength();i++){
 			Element batchElem = (Element) batchList.item(i);
 			
-			String file = batchElem.getElementsByTagName("image").item(0).getTextContent();
+			String file = batchElem.getElementsByTagName("file").item(0).getTextContent();
 			int projectid = projectId;
 			Boolean complete = false;
 			Boolean available = false;

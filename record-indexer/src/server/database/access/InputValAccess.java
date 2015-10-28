@@ -207,4 +207,45 @@ public class InputValAccess {
 			Database.safeClose(stmt);
 		}
 	}
+	
+	public ArrayList<String> search(int valueID) throws DatabaseException{
+		ArrayList<String> tuple = new ArrayList<String>();
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			String query = "SELECT batch_id, file, row_number, field_id FROM inputvalues, records, batches WHERE ? = records.id and records.batch_id= batches.id";
+			stmt = db.getConnection().prepareStatement(query);
+		
+			stmt.setInt(1, valueID);
+			rs = stmt.executeQuery();
+			if (rs.next()) {
+				StringBuilder batch_id = new StringBuilder();
+				batch_id.append(rs.getInt(1));
+				String file = rs.getString(2);
+				StringBuilder row_number = new StringBuilder();
+				row_number.append(rs.getInt(3));
+				StringBuilder field_id = new StringBuilder();
+				field_id.append(rs.getInt(4));
+
+				tuple.add(batch_id.toString());
+				tuple.add(file);
+				tuple.add(row_number.toString());
+				tuple.add(field_id.toString());
+			}
+			else {
+				throw new DatabaseException("Could not search");
+			}
+		}
+		catch (SQLException e) {
+			DatabaseException serverEx = new DatabaseException(e.getMessage(), e);
+			
+			throw serverEx;
+		}		
+		finally {
+			Database.safeClose(rs);
+			Database.safeClose(stmt);
+		}
+		
+		return tuple;	
+	}
 }

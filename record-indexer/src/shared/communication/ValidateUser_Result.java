@@ -16,4 +16,14 @@ public class ValidateUser_Result {
 	public void setUser(User user) {
 		this.user = user;
 	}
+	
+	@Override
+	public String toString(){
+		StringBuilder ss = new StringBuilder();
+		ss.append("TRUE" + "\n");
+		ss.append(user.getFirstname() +"\n");
+		ss.append(user.getLastname()+"\n");
+		ss.append(user.getIndexrecords());
+		return ss.toString();
+	}
 }

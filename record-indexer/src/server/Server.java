@@ -10,7 +10,7 @@ import server.facade.*;
 
 public class Server {
 
-	private static final int SERVER_PORT_NUMBER = 8080;
+	private static int SERVER_PORT_NUMBER;
 	private static final int MAX_WAITING_CONNECTIONS = 10;
 	
 	private static Logger logger;
@@ -99,6 +99,7 @@ public class Server {
 	private HttpHandler downloadFileHandler = new DownloadFileHandler();
 	
 	public static void main(String[] args) {
+		SERVER_PORT_NUMBER = Integer.parseInt(args[0]);
 		new Server().run();
 	}
 
