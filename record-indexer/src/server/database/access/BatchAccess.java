@@ -123,7 +123,7 @@ public class BatchAccess {
 			stmt = db.getConnection().prepareStatement(query);
 			stmt.setInt(1, newproject_id);
 			rs = stmt.executeQuery();
-			while (rs.next()) {
+			while(rs.next()) {
 				int id = rs.getInt(1);
 				int project_id = rs.getInt(2);
 				String file = rs.getString(3);

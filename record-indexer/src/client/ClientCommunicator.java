@@ -21,7 +21,7 @@ public class ClientCommunicator {
 	
 	
 	private static final String SERVER_HOST = "localhost";
-	private static final int SERVER_PORT = 38431;
+	private static final int SERVER_PORT = 38430;
 	private static final String URL_PREFIX = "http://" + SERVER_HOST + ":" + SERVER_PORT;
 	private static final String HTTP_GET = "GET";
 	private static final String HTTP_POST = "POST";

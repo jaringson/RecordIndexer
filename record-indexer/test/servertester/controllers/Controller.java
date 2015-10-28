@@ -149,10 +149,12 @@ public class Controller implements IController {
 		String[] values = _view.getParameterValues();
 		String username = values[0];
 		String password = values[1];
+		String strprojectID = values[2];
 		ClientCommunicator cc = new ClientCommunicator();
 		GetSampleImg_Params params = new GetSampleImg_Params();
 		params.setPassword(password);
 		params.setUsername(username);
+		params.setProjectID(Integer.parseInt(strprojectID));
 		GetSampleImg_Result result;
 		try {
 			result = cc.getSampleImage(params);

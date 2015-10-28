@@ -54,15 +54,15 @@ public class ServerFacade {
 	}
 	
 	public static GetSampleImg_Result getSampleImage(GetSampleImg_Params params) throws ServerException {
-
 		Database db = new Database();
 		GetSampleImg_Result result = new GetSampleImg_Result();
 		try {
 			db.startTransaction();
-			List<Batch> batches = db.getBatchAccess().getBatchByProjectID(params.getProjectID());
+			ArrayList<Batch> batches = db.getBatchAccess().getBatchByProjectID(params.getProjectID());
 			db.endTransaction(true);
 			result.setFile(batches.get(0).getFile());
 			return result;
+			
 		}
 		catch (DatabaseException e) {
 			db.endTransaction(false);
