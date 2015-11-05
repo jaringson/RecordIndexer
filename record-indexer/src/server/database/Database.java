@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,6 +12,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 //import java.util.logging.Logger;
+
+
+
+
 
 import server.database.access.*;
 
@@ -27,7 +30,7 @@ public class Database {
 	
 	
 	private static final String DATABASE_DIRECTORY = "database";
-	private static final String DATABASE_FILE = "Indexer.sqlite";
+	private static final String DATABASE_FILE = "newIndexer.sqlite";
 	private static final String DATABASE_URL = "jdbc:sqlite:" + DATABASE_DIRECTORY +
 												File.separator + DATABASE_FILE;
 	
@@ -41,7 +44,6 @@ public class Database {
 			
 			DatabaseException serverEx = new DatabaseException("Could not load database driver", e);
 			
-			//logger.throwing("server.database.Database", "initialize", serverEx);
 
 			throw serverEx; 
 		}
@@ -83,14 +85,13 @@ public class Database {
 	
 	public void recreateTables(String file) throws DatabaseException, FileNotFoundException{
 		PreparedStatement stmt = null;
+		@SuppressWarnings("resource")
 		Scanner reader = new Scanner (new BufferedInputStream(new FileInputStream(file)));
-		
-		//StringBuilder contents = new StringBuilder();
+
 		while(reader.hasNext())
 		{
 			try {
 				String query = reader.nextLine();
-				//System.out.println(query);
 				stmt = this.getConnection().prepareStatement(query);
 				stmt.executeUpdate();
 			}
@@ -98,7 +99,7 @@ public class Database {
 				throw new DatabaseException("Could not retrieve batch", e);
 			}
 		}
-		
+
 		reader.close();
 		
 		
@@ -110,11 +111,13 @@ public class Database {
 
 	public void startTransaction() throws DatabaseException {
 		try {
+
 			assert (connection == null);			
 			connection = DriverManager.getConnection(DATABASE_URL);
 			connection.setAutoCommit(false);
 		}
 		catch (SQLException e) {
+
 			throw new DatabaseException("Could not connect to database. Make sure " + 
 				DATABASE_FILE + " is available in ./" + DATABASE_DIRECTORY, e);
 		}
@@ -131,7 +134,7 @@ public class Database {
 				}
 			}
 			catch (SQLException e) {
-				System.out.println("Could not end transaction");
+//				System.out.println("Could not end transaction");
 				e.printStackTrace();
 			}
 			finally {

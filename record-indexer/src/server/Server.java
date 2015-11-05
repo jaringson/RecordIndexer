@@ -7,6 +7,7 @@ import java.util.logging.*;
 import com.sun.net.httpserver.*;
 
 import server.facade.*;
+import server.handler.*;
 
 public class Server {
 
@@ -20,9 +21,10 @@ public class Server {
 			initLog();
 		}
 		catch (IOException e) {
-			System.out.println("Could not initialize log: " + e.getMessage());
+//			System.out.println("Could not initialize log: " + e.getMessage());
 		}
 	}
+	
 	
 	private static void initLog() throws IOException {
 		
@@ -52,7 +54,6 @@ public class Server {
 	
 	private void run() {
 		
-		logger.info("Initializing Model");
 		
 		try {
 			ServerFacade.initialize();		
@@ -82,9 +83,8 @@ public class Server {
 		server.createContext("/SubmitBatch", submitBatchHandler);
 		server.createContext("/GetFields", getFieldsHandler);
 		server.createContext("/Search", SearchHandler);
-		server.createContext("/DownloadFile", downloadFileHandler);
+		server.createContext("/", downloadFileHandler);
 		
-		logger.info("Starting HTTP Server");
 
 		server.start();
 	}
@@ -99,8 +99,14 @@ public class Server {
 	private HttpHandler downloadFileHandler = new DownloadFileHandler();
 	
 	public static void main(String[] args) {
-		SERVER_PORT_NUMBER = Integer.parseInt(args[0]);
+		if(args.length ==1){
+			SERVER_PORT_NUMBER = Integer.parseInt(args[0]);
+		}
+		else{
+			SERVER_PORT_NUMBER = 80;		
+		}
 		new Server().run();
 	}
+	
 
 }

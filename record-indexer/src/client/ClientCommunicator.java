@@ -7,7 +7,6 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import shared.communication.*;
-import client.*;
 /**
  * This Class communicates with the Server by sending information through objects
  * in the Shared Communicator Classes.
@@ -20,37 +19,22 @@ public class ClientCommunicator {
 	
 	
 	
-	private static final String SERVER_HOST = "localhost";
-	private static final int SERVER_PORT = 38430;
-	private static final String URL_PREFIX = "http://" + SERVER_HOST + ":" + SERVER_PORT;
-	private static final String HTTP_GET = "GET";
+	private static String SERVER_HOST;
+	private static int SERVER_PORT;
+	private static String URL_PREFIX;
 	private static final String HTTP_POST = "POST";
 
 	private XStream xmlStream;
 
-	public ClientCommunicator() {
+	public ClientCommunicator(String host, int port) {
+		SERVER_HOST = host;
+		SERVER_PORT = port;
+		URL_PREFIX = "http://" + SERVER_HOST + ":" + SERVER_PORT;
 		xmlStream = new XStream(new DomDriver());
 	}
 
-	
-	private Object doGet(String urlPath) throws ClientException {
-		try {
-			URL url = new URL(URL_PREFIX + urlPath);
-			HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-			connection.setRequestMethod(HTTP_GET);
-			connection.connect();
-			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				Object result = xmlStream.fromXML(connection.getInputStream());
-				return result;
-			}
-			else {
-				throw new ClientException(String.format("doGet failed: %s (http code %d)",
-											urlPath, connection.getResponseCode()));
-			}
-		}
-		catch (IOException e) {
-			throw new ClientException(String.format("doGet failed: %s", e.getMessage()), e);
-		}
+	public static String getURLPrefix() {
+		return URL_PREFIX;
 	}
 	
 	private Object doPost(String urlPath, Object postData) throws ClientException {
@@ -138,12 +122,8 @@ public class ClientCommunicator {
 	 * @throws ClientException 
 	 */
 	public Search_Result search(Search_Params params) throws ClientException{
-		return (Search_Result)doPost("/ValidateUser", params);
-		
+		return (Search_Result)doPost("/Search", params);
 	}
 
-	
-	public void downloadFile(){
-		
-	}
+
 }

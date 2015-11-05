@@ -1,0 +1,6 @@
+Oct 29, 2015 9:38:26 PM server.Server run
+INFO: Initializing Model
+Oct 29, 2015 9:38:26 PM server.Server run
+INFO: Initializing HTTP Server
+Oct 29, 2015 9:38:26 PM server.Server run
+INFO: Starting HTTP Server

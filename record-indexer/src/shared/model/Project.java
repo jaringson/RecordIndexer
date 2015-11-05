@@ -21,10 +21,6 @@ public class Project {
 	private int recordsperimage;
 	private int firstycoordinate;
 	private int recordheight;
-	
-	//private ArrayList<Field> fields;
-	//private ArrayList<Batch> batches;
-	
 
 	
 	public Project(){

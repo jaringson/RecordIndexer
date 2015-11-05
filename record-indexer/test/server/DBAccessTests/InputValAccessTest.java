@@ -2,7 +2,6 @@ package server.DBAccessTests;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -14,9 +13,8 @@ import org.junit.Test;
 import server.database.Database;
 import server.database.DatabaseException;
 import server.database.access.InputValAccess;
-import shared.model.Batch;
 import shared.model.Inputvalue;
-import shared.model.Record;
+
 
 public class InputValAccessTest {
 
@@ -35,7 +33,7 @@ public class InputValAccessTest {
 
 	@Before
 	public void setUp() throws Exception {
-		// Delete all contacts from the database	
+
 				db = new Database();		
 				db.startTransaction();
 				
@@ -192,38 +190,7 @@ public class InputValAccessTest {
 		assertEquals(0, all.size());
 		
 	}
-	@Test
-	public void testSearch() throws DatabaseException{
-		Batch batch1 = new Batch(-1,2, "Draft Records", true,true,false);
-		Batch batch2= new Batch(-1,11, "1990 Census", false,true,false);
-		
-		db.getBatchAccess().addBatch(batch1);
-		db.getBatchAccess().addBatch(batch2);
-		
-		Record record1 = new Record(-1, 1,2);
-		Record record2 = new Record(-1,2,10);
-		
-		db.getRecordAccess().addRecord(record1);
-		db.getRecordAccess().addRecord(record2);
-		
-		Inputvalue bob = new Inputvalue(-1,1,3, "Draft Records");
-		Inputvalue amy = new Inputvalue(-1,2,6, "value");
-		
-		dbValue.addValue(bob);
-		dbValue.addValue(amy);
-		
-		ArrayList<String> tuple = db.getInputValAccess().search(1);
-//		System.out.println(tuple.get(0));
-//		System.out.println(tuple.get(1));
-//		System.out.println(tuple.get(2));
-//		System.out.println(tuple.get(3));
-		
-		assertEquals("3", tuple.get(0));
-		assertEquals("images/draft_image0.png", tuple.get(1));
-		assertEquals("0", tuple.get(2));
-		assertEquals("3", tuple.get(3));
-		
-	}
+
 	
 	@Test(expected=DatabaseException.class)
 	public void testInvalidAdd() throws DatabaseException {

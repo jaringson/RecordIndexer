@@ -48,9 +48,6 @@ public class UserAccess {
 				user.setIndexrecords(rs.getInt(7));
 				user.setCurBatch(rs.getInt(8));
 			}
-			else {
-				throw new DatabaseException("Could not find user");
-			}
 		}
 		catch (SQLException e) {
 			throw new DatabaseException("Could not find user", e);

@@ -107,7 +107,7 @@ public class Controller implements IController {
 		String[] values = _view.getParameterValues();
 		String username = values[0];
 		String password = values[1];
-		ClientCommunicator cc = new ClientCommunicator();
+		ClientCommunicator cc = new ClientCommunicator(host,Integer.parseInt(port));
 		ValidateUser_Params params = new ValidateUser_Params();
 		params.setPassword(password);
 		params.setUsername(username);
@@ -128,7 +128,7 @@ public class Controller implements IController {
 		String[] values = _view.getParameterValues();
 		String username = values[0];
 		String password = values[1];
-		ClientCommunicator cc = new ClientCommunicator();
+		ClientCommunicator cc = new ClientCommunicator(host,Integer.parseInt(port));
 		GetProjects_Params params = new GetProjects_Params();
 		params.setPassword(password);
 		params.setUsername(username);
@@ -150,7 +150,7 @@ public class Controller implements IController {
 		String username = values[0];
 		String password = values[1];
 		String strprojectID = values[2];
-		ClientCommunicator cc = new ClientCommunicator();
+		ClientCommunicator cc = new ClientCommunicator(host,Integer.parseInt(port));
 		GetSampleImg_Params params = new GetSampleImg_Params();
 		params.setPassword(password);
 		params.setUsername(username);
@@ -167,16 +167,131 @@ public class Controller implements IController {
 	}
 	
 	private void downloadBatch() {
-	}
-	
-	private void getFields() {
+		String host = _view.getHost();
+		String port = _view.getPort();
+		String[] values = _view.getParameterValues();
+		String username = values[0];
+		String password = values[1];
+		String strprojectID = values[2];
+		ClientCommunicator cc = new ClientCommunicator(host,Integer.parseInt(port));
+		DownloadBatch_Params params = new DownloadBatch_Params();
+		params.setPassword(password);
+		params.setUsername(username);
+		params.setProjectID(Integer.parseInt(strprojectID));
+		DownloadBatch_Result result;
+		try {
+			result = cc.downloadImage(params);
+		} catch (ClientException e) {
+			_view.setResponse("FAILED");
+			e.printStackTrace();
+			return;
+		}
+		_view.setResponse(result.toString());
 	}
 	
 	private void submitBatch() {
+		String host = _view.getHost();
+		String port = _view.getPort();
+		String[] values = _view.getParameterValues();
+		ClientCommunicator cc = new ClientCommunicator(host,Integer.parseInt(port));
+		SubmitBatch_Params params = new SubmitBatch_Params();
+		
+		String username = values[0];
+		String password = values[1];
+		String batchID = values[2];
+		String record = values[3];
+
+		params.setPassword(password);
+		params.setUsername(username);
+		params.setBatchID(Integer.parseInt(batchID));
+		
+		ArrayList<ArrayList<String>> records_final = new ArrayList<ArrayList<String>>();
+		String[] recordsSplit = record.split(";");
+
+		for(String split:recordsSplit){
+			
+			ArrayList<String> records_group = new ArrayList<String>();
+			String[] splits_two = split.split(",");
+			
+			for(String s:splits_two){
+				records_group.add(s);
+			}
+
+			records_final.add(records_group);
+		}
+		params.setValues(records_final);
+
+		SubmitBatch_Result result;
+		try {
+			result = cc.submitBatch(params);
+		} catch (ClientException e) {
+			_view.setResponse("FAILED");
+			e.printStackTrace();
+			return;
+		}
+		_view.setResponse(result.toString());
+	}
+	
+	private void getFields() {
+		String host = _view.getHost();
+		String port = _view.getPort();
+		String[] values = _view.getParameterValues();
+		String username = values[0];
+		String password = values[1];
+		String strProjectID = values[2];
+	
+		GetFields_Params params = new GetFields_Params();
+		ClientCommunicator cc = new ClientCommunicator(host,Integer.parseInt(port));
+		
+		params.setPassword(password);
+		params.setUsername(username);
+		if(!values[2].equals("")){
+			params.setProjectID(Integer.parseInt(strProjectID));
+		}
+		
+		GetFields_Result result;
+		try {
+			result = cc.getFeilds(params);
+		} catch (ClientException e) {
+			_view.setResponse("FAILED");
+			e.printStackTrace();
+			return;
+		}
+		_view.setResponse(result.toString());
 	}
 	
 	private void search() {
+		String host = _view.getHost();
+		String port = _view.getPort();
+		String[] values = _view.getParameterValues();
+		String username = values[0];
+		String password = values[1];
+		String strFields = values[2];
+		String strValues = values[3];
+		ClientCommunicator cc = new ClientCommunicator(host,Integer.parseInt(port));
+		Search_Params params = new Search_Params();
+		
+		String[] splitfeilds = strFields.split(",");
+		ArrayList<Integer> feilds = new ArrayList<Integer>();
+		for(int i =0;i<splitfeilds.length;i++){
+			feilds.add(Integer.parseInt(splitfeilds[i]));
+		}
+		String[] searchValues = strValues.split(",");
+		
+		params.setPassword(password);
+		params.setUsername(username);
+		params.setFieldIDs(feilds);
+		params.setSearchValues(searchValues);
+		
+		Search_Result result;
+		try {
+			result = cc.search(params);
+		} catch (ClientException e) {
+			_view.setResponse("FAILED");
+			e.printStackTrace();
+			return;
+		}
+		_view.setResponse(result.toString());
 	}
-
 }
 

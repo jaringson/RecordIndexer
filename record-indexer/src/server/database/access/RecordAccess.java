@@ -58,26 +58,24 @@ public class RecordAccess {
 	 * @return list of records
 	 * @throws DatabaseException 
 	 */
-	public Record getRecordByBatch(int batch_id) throws DatabaseException{
+	public ArrayList<Record> getRecordsByBatch(int batch_id) throws DatabaseException{
 		
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		Record record = null;
+		ArrayList<Record> records = new ArrayList<Record>();
 		try {
 			String query = "select * from records where batch_id = ?";
 			stmt = db.getConnection().prepareStatement(query);
 			stmt.setInt(1, batch_id);
 		
 			rs = stmt.executeQuery();
-			if (rs.next()) {
+			while (rs.next()) {
 				record = new Record();
 				record.setId(rs.getInt(1));
 				record.setBatch_id(rs.getInt(2));
 				record.setRow_number(rs.getInt(3));
-				
-			}
-			else {
-				throw new DatabaseException("Could not retrieve record");
+				records.add(record);
 			}
 		}
 		catch (SQLException e) {
@@ -87,7 +85,7 @@ public class RecordAccess {
 			Database.safeClose(stmt);
 			Database.safeClose(rs);
 		}
-		return record;
+		return records;
 	}
 	
 	/**
@@ -104,7 +102,6 @@ public class RecordAccess {
 			stmt = db.getConnection().prepareStatement(query);
 			stmt.setInt(1, newRecord.getBatch_id());
 			stmt.setInt(2, newRecord.getRow_number());
-			
 			if (stmt.executeUpdate() == 1) {
 				Statement keyStmt = db.getConnection().createStatement();
 				keyRS = keyStmt.executeQuery("select last_insert_rowid()");

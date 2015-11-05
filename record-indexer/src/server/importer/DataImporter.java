@@ -103,41 +103,49 @@ public class DataImporter {
         }
 	}
 
-	private static void parseBatches(NodeList batchList, int projectId, ArrayList<Field> fields) throws DatabaseException {
-		for(int i =0;i<batchList.getLength();i++){
-			Element batchElem = (Element) batchList.item(i);
+	private static void parseBatches(NodeList multibatchList, int projectId, ArrayList<Field> fields) throws DatabaseException {
+		for(int i =0;i<multibatchList.getLength();i++){
+			Element multibatchElem = (Element) multibatchList.item(i);
+			NodeList batchList = multibatchElem.getElementsByTagName("image");
+			for(int j =0;j<batchList.getLength();j++){
+				Element batchElem = (Element) batchList.item(j);
+				String file = batchElem.getElementsByTagName("file").item(0).getTextContent();
+				int projectid = projectId;
+				Boolean complete = false;
+				Boolean available = false;
+				Boolean checkedout = false;
+				
+		        Batch batch = new Batch();
+		        batch.setFile(file);
+		        batch.setProjectid(projectid);
+		        batch.setComplete(complete);
+		        batch.setAvailable(available);
+		        batch.setCheckedout(checkedout);
+		        
+		        int batchId = database.getBatchAccess().addBatch(batch).getId();
+		        
+		        parseRecords(batchElem.getElementsByTagName("records"), batchId, fields);
+			}
 			
-			String file = batchElem.getElementsByTagName("file").item(0).getTextContent();
-			int projectid = projectId;
-			Boolean complete = false;
-			Boolean available = false;
-			Boolean checkedout = false;
-			
-	        Batch batch = new Batch();
-	        batch.setFile(file);
-	        batch.setProjectid(projectid);
-	        batch.setComplete(complete);
-	        batch.setAvailable(available);
-	        batch.setCheckedout(checkedout);
-	        
-	        int batchId = database.getBatchAccess().addBatch(batch).getId();
-	        
-	        parseRecords(batchElem.getElementsByTagName("records"), batchId, fields);
 		}
 	}
 
-	private static void parseRecords(NodeList recordList, int batchId, ArrayList<Field> fields) throws DatabaseException {
-		for(int i =0;i<recordList.getLength();i++){
-			Element recordElem = (Element) recordList.item(i);
-			int batch_id = batchId;
-			int row_number = i;
+	private static void parseRecords(NodeList multirecordList, int batchId, ArrayList<Field> fields) throws DatabaseException {
+		for(int i =0;i<multirecordList.getLength();i++){
+			Element multirecordElem = (Element) multirecordList.item(i);
+			NodeList recordList = multirecordElem.getElementsByTagName("record");
+			for(int j=0;j<recordList.getLength();j++){
+				Element recordElem = (Element) recordList.item(j);
+				int batch_id = batchId;
+				int row_number = j+1;
+				Record record = new Record();
+				record.setBatch_id(batch_id);
+				record.setRow_number(row_number);
+				int recordId = database.getRecordAccess().addRecord(record).getId();
 			
-			Record record = new Record();
-			record.setBatch_id(batch_id);
-			record.setRow_number(row_number);
-			int recordId = database.getRecordAccess().addRecord(record).getId();
-		
-			parseValues(recordElem.getElementsByTagName("values"),recordId,fields);
+				parseValues(recordElem.getElementsByTagName("values"),recordId,fields);
+			}
+			
 		}
 	}
 
@@ -145,7 +153,6 @@ public class DataImporter {
 		for(int i =0;i<multivalueList.getLength();i++){
 			Element multivalueElem = (Element) multivalueList.item(i);
 			NodeList valueList = multivalueElem.getElementsByTagName("value");
-//			System.out.println(valueList.getLength());
 			for(int j = 0; j< valueList.getLength();j++){
 				Element valueElem = (Element)valueList.item(j);
 				String inputvalue = valueElem.getTextContent();
@@ -157,11 +164,6 @@ public class DataImporter {
 				value.setField_id(fields.get(j).getId());
 				
 				database.getInputValAccess().addValue(value);
-//				System.out.println(fields.get(j).getId());
-//				System.out.println(inputvalue);
-//
-//				System.out.println("Press Any Key To Continue...");
-//		        new java.util.Scanner(System.in).nextLine();
 			}
 		}
 	}

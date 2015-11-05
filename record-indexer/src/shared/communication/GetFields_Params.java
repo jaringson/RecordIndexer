@@ -10,8 +10,6 @@ public class GetFields_Params {
 	private String username;
 	private String password;
 	private int projectID;
-	
-	
 
 	public GetFields_Params() {
 		username =null;

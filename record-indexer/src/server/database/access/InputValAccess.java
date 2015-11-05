@@ -142,7 +142,6 @@ public class InputValAccess {
 			stmt.setInt(1, newValue.getRecord_id());
 			stmt.setInt(2, newValue.getField_id());
 			stmt.setString(3, newValue.getInputvalue());
-			
 			if (stmt.executeUpdate() == 1) {
 				Statement keyStmt = db.getConnection().createStatement();
 				keyRS = keyStmt.executeQuery("select last_insert_rowid()");
@@ -208,19 +207,25 @@ public class InputValAccess {
 		}
 	}
 	
-	public ArrayList<String> search(int valueID) throws DatabaseException{
+	public ArrayList<String> search(int valueFieldID,String inputvalue) throws DatabaseException{
 		ArrayList<String> tuple = new ArrayList<String>();
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
-			String query = "SELECT batch_id, file, row_number, field_id FROM inputvalues, records, batches WHERE ? = records.id and records.batch_id= batches.id";
+			String query = "SELECT batch_id, file, row_number, field_id "
+					+"FROM inputvalues, records, batches " 
+					+"WHERE inputvalues.inputvalue = ? and "
+					+ "inputvalues.record_id = records.id and "
+					+ "records.batch_id= batches.id and "
+					+ "inputvalues.field_id =?";
 			stmt = db.getConnection().prepareStatement(query);
-		
-			stmt.setInt(1, valueID);
+			stmt.setString(1, inputvalue);
+			stmt.setInt(2, valueFieldID);
+			
 			rs = stmt.executeQuery();
-			if (rs.next()) {
+			while (rs.next()) {
 				StringBuilder batch_id = new StringBuilder();
-				batch_id.append(rs.getInt(1));
+				batch_id.append(rs.getInt(1));		
 				String file = rs.getString(2);
 				StringBuilder row_number = new StringBuilder();
 				row_number.append(rs.getInt(3));
@@ -232,13 +237,9 @@ public class InputValAccess {
 				tuple.add(row_number.toString());
 				tuple.add(field_id.toString());
 			}
-			else {
-				throw new DatabaseException("Could not search");
-			}
 		}
 		catch (SQLException e) {
 			DatabaseException serverEx = new DatabaseException(e.getMessage(), e);
-			
 			throw serverEx;
 		}		
 		finally {

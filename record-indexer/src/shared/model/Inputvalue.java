@@ -22,7 +22,7 @@ public class Inputvalue {
 		this.inputvalue = inputvalue;
 	}
 	public Inputvalue() {
-		// TODO Auto-generated constructor stub
+
 	}
 	public int getId() {
 		return id;

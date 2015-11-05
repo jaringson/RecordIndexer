@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-//import java.util.logging.Logger;
 
 import server.database.Database;
 import server.database.DatabaseException;
@@ -13,11 +12,6 @@ import shared.model.Project;
 
 public class ProjectAccess {
 	
-//private static Logger logger;
-	
-//	static {
-//		logger = Logger.getLogger("contactmanager");
-//	}
 
 	private Database db;
 	

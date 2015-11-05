@@ -30,7 +30,7 @@ public class Batch {
 		this.checkedout = checkedout;
 	}
 	public Batch() {
-		// TODO Auto-generated constructor stub
+
 	}
 	public boolean isAvailable() {
 		return available;

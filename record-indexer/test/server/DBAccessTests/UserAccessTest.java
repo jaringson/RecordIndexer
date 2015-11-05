@@ -166,7 +166,6 @@ public class UserAccessTest {
 		
 	}
 	
-	@Test(expected=DatabaseException.class)
 	public void testValidateUserFail() throws DatabaseException {
 		User bob = new User(-1, "Bob White", "bobwhite", "Bob", 
 				"White", "bob@white.org",3,2);
@@ -181,9 +180,9 @@ public class UserAccessTest {
 		User carl = new User(-1, "Carl White", "carl@indexer", "Carl",
 				"White", "amy@white.org", 15, 18);
 		
-		@SuppressWarnings("unused")
 		User u = dbUser.validateUser("Carl", "White");
 		
+		assertEquals(u,null);
 	}
 	
 	@Test
