@@ -7,6 +7,10 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
+import shared.communication.ValidateUser_Result;
+import client.controller.Controller;
+import client.maingui.Run;
+
 @SuppressWarnings("serial")
 public class LoginFrame extends JFrame{
 
@@ -15,12 +19,16 @@ public class LoginFrame extends JFrame{
 
 		this.setTitle("Login");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setLocation(600, 350);
-		this.setSize(300, 150);
+		this.setLocation(700, 350);
+		this.setSize(400, 130);
+		this.setResizable(false); 
 		
+		JPanel p = new JPanel();
 		JPanel p1 = new JPanel();
 		JPanel p2 = new JPanel();
 		JPanel p3 = new JPanel();
+		
+		p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
 		
 		JLabel userlabel = new JLabel("username");
 		JTextField usertext = new JTextField();
@@ -30,7 +38,7 @@ public class LoginFrame extends JFrame{
 		p1.add(usertext);
 		
 		JLabel passwordlabel = new JLabel("password");
-		JTextField passwordtext = new JTextField();
+		JPasswordField passwordtext = new JPasswordField();
 		passwordtext.setPreferredSize(new Dimension(100, 20));
 		
 		p2.add(passwordlabel);
@@ -38,21 +46,56 @@ public class LoginFrame extends JFrame{
 		
 		JButton loginb = new JButton("Login");
 		JButton exitb = new JButton("Exit");
+		ActionListener loginActList = new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				ValidateUser_Result result = Controller.validateUser(usertext.getText(),passwordtext.getText());
+				if(result.toString() != "FALSE"){
+					JOptionPane.showMessageDialog(new JFrame(),
+						    "Welcome " + result.getUser().getFirstname() + " " 
+						    		+result.getUser().getLastname()+".\n" 
+						    		+"You have indexed "
+						    		+ result.getUser().getIndexrecords() 
+						    		+" records",
+						    "Welcome to Indexer",
+						    JOptionPane.PLAIN_MESSAGE);
+					Run.toggle();
+				}
+				else{
+					JOptionPane.showMessageDialog(new JFrame(),
+						    "Invalid username and/or password",
+						    "Login Failed",
+						    JOptionPane.ERROR_MESSAGE);
+				}
+				
+				
+			}
+		};
+		ActionListener exitActList = new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		};
+		exitb.addActionListener(exitActList);
+		loginb.addActionListener(loginActList);
 		
 		p3.add(loginb);
 		p3.add(exitb);
 		
-		this.add(p1, BorderLayout.NORTH);
-		this.add(p2, BorderLayout.CENTER);
-		this.add(p3, BorderLayout.SOUTH);
+		p.add(p1);
+		p.add(p2);
+		p.add(p3);
+		
+		
+		this.add(p);
 	
 		
 	}
-	public ActionListener listener = new ActiveListener(ActionEvent e){
-		if(e.getSource() == "Exit"){
-			System.out.pringln("Here is Exit");
-		}
-	};
+
 }
 
 

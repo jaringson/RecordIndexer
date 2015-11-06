@@ -32,6 +32,13 @@ public class ClientCommunicator {
 		URL_PREFIX = "http://" + SERVER_HOST + ":" + SERVER_PORT;
 		xmlStream = new XStream(new DomDriver());
 	}
+	
+	public ClientCommunicator() {
+		SERVER_HOST = "localhost";
+		SERVER_PORT = 38428;
+		URL_PREFIX = "http://" + SERVER_HOST + ":" + SERVER_PORT;
+		xmlStream = new XStream(new DomDriver());
+	}
 
 	public static String getURLPrefix() {
 		return URL_PREFIX;
