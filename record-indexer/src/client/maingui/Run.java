@@ -16,8 +16,8 @@ public class Run {
 					loginframe = new LoginFrame();			
 					indexerframe = new IndexerFrame();
 					// Make the frame window visible
-					loginframe.setVisible(true);
-					indexerframe.setVisible(false);
+					loginframe.setVisible(false);
+					indexerframe.setVisible(true);
 				}
 			}
 		);
