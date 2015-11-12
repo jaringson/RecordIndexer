@@ -1,8 +1,8 @@
 package client.maingui;
 
-import java.awt.Event;
 import java.awt.EventQueue;
 
+import client.Controller;
 import client.logingui.LoginFrame;
 
 public class Run {
@@ -13,17 +13,18 @@ public class Run {
 		EventQueue.invokeLater(
 			new Runnable() {
 				public void run() {
+					Controller.initialize(args[0], Integer.parseInt(args[1]));
 					loginframe = new LoginFrame();			
 					indexerframe = new IndexerFrame();
 					// Make the frame window visible
-					loginframe.setVisible(false);
+					loginframe.setVisible(true);
 					indexerframe.setVisible(true);
 				}
 			}
 		);
 	}
+	
 	public static void toggle(){
-		System.out.println("here");
 		if(loginframe.isShowing()){
 			loginframe.setVisible(false);
 			indexerframe.setVisible(true);
@@ -33,7 +34,7 @@ public class Run {
 			indexerframe.setVisible(false);
 		}
 	}
-	public static void exitall(){
+	public static void downloaded (){
 		
 	}
 }

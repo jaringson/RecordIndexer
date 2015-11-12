@@ -1,9 +1,12 @@
 package client.maingui;
 
+import java.awt.Dimension;
+
 import javax.swing.*;
 
-public class View extends JPanel {
+@SuppressWarnings("serial")
+public class View extends JComponent {
 	public View(){
-		this.add(new JButton("Jaron"));
+		this.setPreferredSize(new Dimension(400, 700));
 	}
 }

@@ -7,7 +7,10 @@ import javax.swing.*;
 @SuppressWarnings("serial")
 public class TopButtonPanel extends JPanel{
 	public TopButtonPanel(){
+		this.setPreferredSize(new Dimension(0, 35));
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+		
+		
 		
 		JButton zoomin = new JButton("Zoom In");
 		JButton zoomout = new JButton("Zoom Out");

@@ -35,7 +35,7 @@ public class ClientCommunicator {
 	
 	public ClientCommunicator() {
 		SERVER_HOST = "localhost";
-		SERVER_PORT = 38428;
+		SERVER_PORT = 38427;
 		URL_PREFIX = "http://" + SERVER_HOST + ":" + SERVER_PORT;
 		xmlStream = new XStream(new DomDriver());
 	}

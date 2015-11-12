@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 import shared.communication.ValidateUser_Result;
-import client.controller.Controller;
+import client.Controller;
 import client.maingui.Run;
 
 @SuppressWarnings("serial")
@@ -51,13 +51,13 @@ public class LoginFrame extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				ValidateUser_Result result = Controller.validateUser(usertext.getText(),passwordtext.getText());
-				if(result.toString() != "FALSE"){
+				
+				if(Controller.validateUser(usertext.getText(),passwordtext.getText())){
 					JOptionPane.showMessageDialog(new JFrame(),
-						    "Welcome " + result.getUser().getFirstname() + " " 
-						    		+result.getUser().getLastname()+".\n" 
+						    "Welcome " + Controller.getUser().getFirstname() + " " 
+						    		+Controller.getUser().getLastname()+".\n" 
 						    		+"You have indexed "
-						    		+ result.getUser().getIndexrecords() 
+						    		+ Controller.getUser().getIndexrecords() 
 						    		+" records",
 						    "Welcome to Indexer",
 						    JOptionPane.PLAIN_MESSAGE);
