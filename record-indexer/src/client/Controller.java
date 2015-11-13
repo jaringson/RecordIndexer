@@ -64,8 +64,23 @@ public class Controller {
 			return null;
 		}
 	}
-	public static void getSampleImage(){
-		
+	public static String getSampleImage(int projectID){
+		GetSampleImg_Params params = new GetSampleImg_Params();
+//		params.setPassword(user.getPassword());
+//		params.setUsername(user.getUsername());
+		params.setPassword("parker");
+		params.setUsername("sheila");
+		params.setProjectID(projectID);
+		GetSampleImg_Result result;
+		try {
+			result = cc.getSampleImage(params);
+			String url = result.toString();
+			return url;
+			
+		} catch (ClientException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	public static void downloadBatch(){
 		

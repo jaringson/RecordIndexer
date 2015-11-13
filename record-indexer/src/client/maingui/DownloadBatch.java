@@ -1,8 +1,11 @@
 package client.maingui;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -14,6 +17,10 @@ import client.BatchState.Cell;
 
 @SuppressWarnings("serial")
 public class DownloadBatch extends JDialog{
+	
+	JComboBox<String> projectscombo;
+	ArrayList<Project> allprojects;
+	
 	public DownloadBatch(){
 		
 		JPanel p0 =new JPanel();
@@ -22,9 +29,9 @@ public class DownloadBatch extends JDialog{
 		
 		
 		JLabel projectlabel = new JLabel("Project: ");
-		JComboBox<String> projectscombo = new JComboBox<String>();
+		projectscombo = new JComboBox<String>();
 		projectscombo.setPreferredSize(new Dimension(100, 20));
-		ArrayList<Project> allprojects = Controller.getProjects();
+		allprojects = Controller.getProjects();
 		for (Project p :allprojects){
 			projectscombo.addItem(p.getTitle());
 		}
@@ -87,47 +94,75 @@ public class DownloadBatch extends JDialog{
 		this.setResizable(false);
 		this.setVisible(true);
 	}
+	
+	class sampleActList implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JDialog sample = new JDialog();
+			JPanel p = new JPanel();
+			p.setSize(500, 500);
+			
+			
+			
+//			JButton b = (JButton) e.getSource();
+//			JPanel p1 = (JPanel) b.getParent();
+//			JComboBox<String> combo = (JComboBox<String>) p1.getComponent(1);
+			String projectname = (String) projectscombo.getSelectedItem();
+			for(Project curproject: allprojects){
+				if(curproject.getTitle().equals(projectname)){
+					String ss = Controller.getSampleImage(curproject.getId());
+					System.out.print(ss);
+					JEditorPane website;
+					website = new JEditorPane();
+					website.setEditable(false);
+//						website.setOpaque(true);
+//						website.setBackground(Color.white);
+						try {
+							website.setPage(ss);
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+//						JScrollPane htmlScrollPane = new JScrollPane(website);
+//				        htmlScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+					sample.add(website);
+				}
+			}
+			
+			
+			
+//			sample.add(p);
+			sample.setSize(500,500);
+			sample.setModal(true);
+			sample.setLocation(200, 200);
+			sample.setVisible(true);
+		
+		}
+
+
+
+	};
+
 }
-class sampleActList implements ActionListener, BatchStateListener {
+
+class cancelActList implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
-	}
-
-	@Override
-	public void valueChanged(Cell cell, String newValue) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void selectedCellChanged(Cell newSelectedCell) {
-		// TODO Auto-generated method stub
-		
-	}
-
-};
-class cancelActList implements ActionListener , BatchStateListener{
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		
-	}
-
-	@Override
-	public void valueChanged(Cell cell, String newValue) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void selectedCellChanged(Cell newSelectedCell) {
-		// TODO Auto-generated method stub
-		
+		JButton j = (JButton) e.getSource();
+		DownloadBatch d = (DownloadBatch) j.getTopLevelAncestor();
+		d.dispose();	
 	}
 }
 class downloadActList implements ActionListener, BatchStateListener {
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		JButton b = (JButton) e.getSource();
+		JPanel p2 = (JPanel) b.getParent();
+		JPanel p0 = (JPanel) p2.getParent();
+		JPanel p1 = (JPanel) p0.getComponent(0);
+		JComboBox<String> combo = (JComboBox<String>) p1.getComponent(1);
+		
 		
 	}
 

@@ -3,10 +3,6 @@ package client;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
-
-
 public class BatchState {
 	
 	private String[][] values;
@@ -59,12 +55,15 @@ public class BatchState {
 	public Cell getSelectedCell() {
 		return selectedCell;
 	}
+	
+	
 	public interface BatchStateListener {
 		
 		public void valueChanged(Cell cell, String newValue);
 		
 		public void selectedCellChanged(Cell newSelectedCell);
 	}
+	
 	public class Cell {
 		int record;
 		int field;

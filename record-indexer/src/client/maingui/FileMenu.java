@@ -31,8 +31,6 @@ public class FileMenu extends JMenuBar{
 			public void actionPerformed(ActionEvent e) {
 
 				DownloadBatch d = new DownloadBatch();
-				
-	
 			}
 		};
 		downloadMenuItem.addActionListener(downloadActList);
