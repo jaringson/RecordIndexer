@@ -44,19 +44,20 @@ public class ClientUnitTests {
 
 	public static void main(String[] args) {
 
-		//These are for testing ClientCommunicator seperate from Server Unit Tests
+		//These are for testing ClientCommunicator separate from Server Unit Tests
 		
-//		String[] testClasses = new String[] {
-//				"client.ClientUnitTests",
-//				"client.CCTests.GetProjectsTest",
-//				"client.CCTests.ValidateUsersTest",
-//				"client.CCTests.GetSampleImgTest",
-//				"client.CCTests.DownloadBatchTest",
-//				"client.CCTests.GetFeildsTest",
-//				"client.CCTests.SearchTest"
-//		};
-//
-//		org.junit.runner.JUnitCore.main(testClasses);
+		String[] testClasses = new String[] {
+				"client.ClientUnitTests",
+				"client.CCTests.GetProjectsTest",
+				"client.CCTests.ValidateUsersTest",
+				"client.CCTests.GetSampleImgTest",
+				"client.CCTests.DownloadBatchTest",
+				"client.CCTests.GetFeildsTest",
+				"client.CCTests.SearchTest",
+				"client.QualityCheckTests.QualityCheckerTest"
+		};
+
+		org.junit.runner.JUnitCore.main(testClasses);
 	}
 }
 

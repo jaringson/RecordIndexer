@@ -1,19 +1,27 @@
 package client.logingui;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.swing.*;
 
-import shared.communication.ValidateUser_Result;
+import shared.communication.DownloadBatch_Result;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
+import client.BatchState;
 import client.Controller;
-import client.maingui.Run;
+import client.maingui.IndexerFrame;
 
 @SuppressWarnings("serial")
 public class LoginFrame extends JFrame{
 
+	public JFrame indexerFrame;
 	public LoginFrame(){
 		super();
 
@@ -48,10 +56,11 @@ public class LoginFrame extends JFrame{
 		JButton exitb = new JButton("Exit");
 		ActionListener loginActList = new ActionListener() {
 			
+			@SuppressWarnings("deprecation")
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				
+
 				if(Controller.validateUser(usertext.getText(),passwordtext.getText())){
 					JOptionPane.showMessageDialog(new JFrame(),
 						    "Welcome " + Controller.getUser().getFirstname() + " " 
@@ -61,7 +70,29 @@ public class LoginFrame extends JFrame{
 						    		+" records",
 						    "Welcome to Indexer",
 						    JOptionPane.PLAIN_MESSAGE);
-					Run.toggle();
+
+					BatchState bState;
+
+					XStream xStream = new XStream(new DomDriver());
+					try{
+						
+						InputStream inFile = new FileInputStream(usertext.getText()+ ".xml");
+						bState = (BatchState) xStream.fromXML(inFile);
+						inFile.close();
+						bState.reinitialize();
+						Controller.reinitialize(bState);
+						
+						indexerFrame = new IndexerFrame(bState);
+						
+						bState.setAll();
+						
+					} catch(IOException error){
+						bState = new BatchState();
+						Controller.reinitialize(bState);
+						indexerFrame = new IndexerFrame(bState);
+					}
+					JButton b = (JButton)e.getSource();
+					b.getTopLevelAncestor().setVisible(false);
 				}
 				else{
 					JOptionPane.showMessageDialog(new JFrame(),
@@ -89,13 +120,9 @@ public class LoginFrame extends JFrame{
 		p.add(p1);
 		p.add(p2);
 		p.add(p3);
-		
-		
-		this.add(p);
-	
-		
-	}
 
+		this.add(p);
+	}
 }
 
 

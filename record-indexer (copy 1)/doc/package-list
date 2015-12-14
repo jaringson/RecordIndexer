@@ -1,0 +1,9 @@
+client
+server
+server.database
+server.database.access
+servertester
+servertester.controllers
+servertester.views
+shared.communication
+shared.model

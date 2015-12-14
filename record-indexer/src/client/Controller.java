@@ -1,9 +1,18 @@
 package client;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import shared.communication.*;
 import shared.model.Batch;
+import shared.model.Field;
 import shared.model.Project;
 import shared.model.User;
 
@@ -13,12 +22,28 @@ public class Controller {
 		cc = new ClientCommunicator(host,port);
 	}
 	private static ClientCommunicator cc;
+	private static BatchState BState;
 	
 	private static User user = new User();
 	private static Project project = new Project();
-	
-	private static Batch batch = new Batch();
+	private static Batch batch = null;
 
+	
+	public static void Save() throws FileNotFoundException{
+		
+		BState.setSaveData();
+		XStream xs = new XStream(new DomDriver());
+		BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(user.getUsername()+".xml"));
+		xs.toXML(BState, os);
+	}
+	public static void reinitialize(BatchState bState){
+		BState = bState;
+		if(bState.user!=null){
+			batch = bState.batch;
+			user = bState.user;
+			project = bState.project;
+		}
+	}
 	public static Boolean validateUser(String username, String password) {
 		
 		ValidateUser_Params params = new ValidateUser_Params();
@@ -43,33 +68,27 @@ public class Controller {
 	
 	public static ArrayList<Project> getProjects(){
 		GetProjects_Params params = new GetProjects_Params();
-//		params.setPassword(user.getPassword());
-//		params.setUsername(user.getUsername());
-		params.setPassword("parker");
-		params.setUsername("sheila");
+		params.setPassword(user.getPassword());
+		params.setUsername(user.getUsername());
+
 		GetProjects_Result result;
 		ArrayList<Project> allprojects = new ArrayList<Project>();
-//		System.out.println("here 1");
 		try {
 			result = cc.getProjects(params);
-			
 			allprojects = (ArrayList<Project>) result.getProjects();
-//			System.out.println(allprojects.size());
 			return allprojects;
 			
 				
 		} catch (ClientException e) {
 			e.printStackTrace();
-//			System.out.println("here 2");
 			return null;
 		}
 	}
 	public static String getSampleImage(int projectID){
 		GetSampleImg_Params params = new GetSampleImg_Params();
-//		params.setPassword(user.getPassword());
-//		params.setUsername(user.getUsername());
-		params.setPassword("parker");
-		params.setUsername("sheila");
+		params.setPassword(user.getPassword());
+		params.setUsername(user.getUsername());
+
 		params.setProjectID(projectID);
 		GetSampleImg_Result result;
 		try {
@@ -82,22 +101,58 @@ public class Controller {
 			return null;
 		}
 	}
-	public static void downloadBatch(){
+	public static DownloadBatch_Result downloadBatch(int projectID){
+		DownloadBatch_Params params = new DownloadBatch_Params();
+		params.setPassword(user.getPassword());
+		params.setUsername(user.getUsername());
+		params.setProjectID(projectID);
+		DownloadBatch_Result result;
+		try {
+			result = cc.downloadImage(params);
+			batch = result.getBatch();
+			project = result.getProject();
+			return result;
+			
+		} catch (ClientException e) {
+			e.printStackTrace();
+			return null;
+		}
 		
 	}
-	public static void submitBatch(){
-		
+	public static void submitBatch(ArrayList<ArrayList<String>> values){
+		SubmitBatch_Params params = new SubmitBatch_Params();
+		params.setPassword(user.getPassword());
+		params.setUsername(user.getUsername());
+		params.setBatchID(batch.getId());
+		params.setValues(values);
+		SubmitBatch_Result result;
+		try {
+			result = cc.submitBatch(params);
+			batch = null;
+			
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
 	}
-	public static void getFields(){
-		
+	public static ArrayList<Field> getFields(){
+		GetFields_Params params = new GetFields_Params();
+		params.setPassword(user.getPassword());
+		params.setUsername(user.getUsername());
+		params.setProjectID(project.getId());
+		GetFields_Result result;
+		try {
+			result = cc.getFeilds(params);
+			return (ArrayList<Field>) result.getFields();
+			
+		} catch (ClientException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	public static void search(){
 	
 	}
 
-	
-	
-	
 	public static User getUser() {
 		return user;
 	}

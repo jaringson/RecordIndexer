@@ -1,71 +1,202 @@
 package client;
 
+import java.awt.Point;
+import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BatchState {
+import javax.swing.JFrame;
+
+import client.image.ImageComp;
+import client.maingui.FormEntry;
+import client.maingui.IndexerFrame;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
+import shared.communication.DownloadBatch_Result;
+import shared.model.*;
+
+public class BatchState  implements BatchListener{
+
+	XStream xmlStream = new XStream(new DomDriver());
 	
-	private String[][] values;
-	private Cell selectedCell;
-	private List<BatchStateListener> listeners;
+	public BatchState(){
+		
+		toggleHighLight(true);
+		xLocation = 300;
+		yLocation = 100;
+		width =1200;
+		height =800;
+		verSlide = 500;
+		horSlide = 400;
+	}
+
 	
-	public BatchState(int records, int fields) {
-		values = new String[records][fields];
-		selectedCell = null;
-		listeners = new ArrayList<BatchStateListener>();
+	public transient static List<BatchListener> listeners = new ArrayList<BatchListener>();
+	public transient static IndexerFrame frame;
+	
+	//all the data variables
+	//zoom level, 2D array[][]String, highlights, frame size/location
+	public int xLocation;
+	public int yLocation;
+	public int width;
+	public int height;
+	public int verSlide;
+	public int horSlide;
+	public Cell currentCell;
+	public Batch batch;
+	public User user;
+	public Project project;
+
+	public ArrayList<Field> fields;
+	public ArrayList<ArrayList<Cell>> cells;
+	
+	public int zoom;
+	public Boolean highlightOn = true;
+	public Boolean inverted = false;
+	public int w_translateX =0;
+	public int w_translateY=0;
+	public double scale=1.0;
+	
+	private int currentRecord;
+	
+	
+	public  void reinitialize(){
+		listeners = new ArrayList<BatchListener>();
+		
+	}
+	public void setAll(){
+		if(batch != null){
+			DownloadBatch_Result result = new DownloadBatch_Result();
+			result.setBatch(batch);
+			result.setProject(project);
+			result.setFields(fields);
+
+			downloadBatch(result);
+			setSelectedCell(currentCell);
+		}
+
+		
+	}
+
+	public void addListener(BatchListener listen){
+		listeners.add(listen);
 	}
 	
-	public void addListener(BatchStateListener l) {
-		listeners.add(l);
+	public void setSaveData(){
+
+		xLocation = frame.getX();
+		yLocation = frame.getY();
+		width = frame.getWidth();
+		height = frame.getHeight();
+		verSlide = frame.getVerSlide();
+		horSlide = frame.getHorSlide();
+		batch = Controller.getBatch();
+		user = Controller.getUser();
+		project = Controller.getProject();
+		w_translateX = ImageComp.getW_translateX();
+		w_translateY = ImageComp.getW_translateY();
+		scale = ImageComp.getScale();
 	}
-	
-	public void setValue(Cell cell, String value) {
+
+	@Override
+	public void setSelectedCell(Cell cell) {
+
+			
+		currentCell = cell;
+		if(currentCell != null && Controller.getBatch()!= null){
+			
+			for(BatchListener current: listeners){
+				current.setSelectedCell(currentCell);			
 		
-		String oldValue = values[cell.record][cell.field];
-        
-		values[cell.record][cell.field] = value;
-		
-		if (!value.equals(oldValue)) {
-        
-			for (BatchStateListener l : listeners) {
-				l.valueChanged(cell, value);
 			}
+		}
+
+	}
+
+	
+	@Override
+	public void setCellData(String value, Cell cell) {}
+
+	@Override
+	public void downloadBatch(DownloadBatch_Result result) {
+		fields = (ArrayList<Field>) result.getFields();
+		batch = result.getBatch();
+		project = result.getProject();
+		for(BatchListener current: listeners){
+			current.downloadBatch(result);
+		}
+	}
+
+	@Override
+	public void submitBatch() {
+		ArrayList<ArrayList<String>> values = new ArrayList<ArrayList<String>>();
+		for(int j =0;j<cells.get(0).size();j++){
+			ArrayList<String> rowvalues = new ArrayList<String>();
+    		values.add(rowvalues);
+		}
+		for(int j =0;j<cells.size();j++){
+			
+    		for(int k= 0;k < cells.get(j).size();k++){
+    			if(cells.get(j).get(k).value == null){
+    				values.get(k).add("");
+    			}
+    			else{
+    				values.get(k).add(cells.get(j).get(k).value);
+    			}
+    		}
+		}
+		
+		Controller.submitBatch(values);
+		for(BatchListener current: listeners){
+			current.submitBatch();
+		}
+	}
+
+	@Override
+	public void toggleHighLight(boolean on) {
+		highlightOn = on;
+		for(BatchListener current: listeners){
+			current.toggleHighLight(this.highlightOn);
+		}
+		
+	}
+
+	@Override
+	public void zoom(boolean zoomin) {
+		for(BatchListener current: listeners){
+			current.zoom(zoomin);
+		}
+	}
+
+	@Override
+	public void invertImage(boolean inverted) {
+		this.inverted = inverted;
+		for(BatchListener current: listeners){
+			current.invertImage(inverted);
+		}
+	}
+
+	public class Cell{
+		public String value;
+		public double x;
+		public double x2;
+		public double y;
+		public double y2;
+		public int record;
+		public int field;
+		public Cell(double x, double y,double x2,double y2){
+			this.x = x;
+			this.y = y;
+			this.x2 = x2;
+			this.y2 = y2;
+		}
+		
+		public void setRecordField(int record, int field){
+			this.record = record;
+			this.field = field;
 		}
 	}
 	
-	public String getValue(Cell cell) {
-		return values[cell.record][cell.field];
-	}
-	
-	public void setSelectedCell(Cell selCell) {
-		
-		Cell oldValue = selectedCell;
-        
-		selectedCell = selCell;
-		
-		if (selCell.record != oldValue.record || 
-			selCell.field != oldValue.field) {
-        
-			for (BatchStateListener l : listeners) {
-				l.selectedCellChanged(selCell);
-			}
-		}
-	}
-	
-	public Cell getSelectedCell() {
-		return selectedCell;
-	}
-	
-	
-	public interface BatchStateListener {
-		
-		public void valueChanged(Cell cell, String newValue);
-		
-		public void selectedCellChanged(Cell newSelectedCell);
-	}
-	
-	public class Cell {
-		int record;
-		int field;
-	}
 }

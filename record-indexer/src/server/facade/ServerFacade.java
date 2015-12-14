@@ -134,6 +134,7 @@ public class ServerFacade {
 		Database db = new Database();
 		SubmitBatch_Result result = new SubmitBatch_Result();
 		User user;
+		Batch batch;
 		try {
 
 			db.startTransaction();
@@ -144,7 +145,7 @@ public class ServerFacade {
 				throw new ServerException("Didn't Validate User");
 			}
 
-			Batch batch = db.getBatchAccess().getBatchByID(params.getBatchID());
+			batch = db.getBatchAccess().getBatchByID(params.getBatchID());
 			Project project = db.getProjectAccess().getProjectByID(batch.getProjectid());
 
 			//Check if User own batch
@@ -178,7 +179,9 @@ public class ServerFacade {
 			}
 			user.setCurBatch(-1);
 			user.setIndexrecords(user.getIndexrecords()+params.getValues().size());
+			batch.setCheckedout(false);
 			db.startTransaction();
+			db.getBatchAccess().updateBatch(batch);
 			db.getUserAccess().updateUser(user);
 			db.endTransaction(true);
 			result.setSuccess(true);

@@ -1,28 +1,30 @@
 package client.maingui;
 
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import shared.communication.DownloadBatch_Result;
 import shared.model.Project;
 import client.*;
-import client.BatchState.BatchStateListener;
-import client.BatchState.Cell;
 
 @SuppressWarnings("serial")
-public class DownloadBatch extends JDialog{
+public class DownloadBatch extends JDialog {
 	
 	JComboBox<String> projectscombo;
 	ArrayList<Project> allprojects;
+	protected static BatchState bState;
 	
-	public DownloadBatch(){
+	public DownloadBatch(BatchState bState){
 		
+		this.bState = bState;
 		JPanel p0 =new JPanel();
 		JPanel p1 = new JPanel();
 		JPanel p2 = new JPanel();
@@ -54,32 +56,8 @@ public class DownloadBatch extends JDialog{
 		p2.add(cancel);
 		p2.add(Box.createRigidArea(new Dimension(5,5)));
 		p2.add(download);
-//		JFrame frame = new JFrame();
-//		ArrayList<Project> allprojects = Controller.getProjects();
-//		if(allprojects != null){
-//			Object[] possibilities = new Object[allprojects.size()];
-//			int i=0;
-//			for (Project p :allprojects){
-//				//System.out.println(i);
-//				possibilities[i] =p.getTitle();
-//				i++;
-//			}
-//			String s = (String)JOptionPane.showInputDialog(
-//			                    frame,
-//			                    "Projects: ",
-//			                    "Download Batch",
-//			                    JOptionPane.PLAIN_MESSAGE,
-//			                    null, 
-//			                    possibilities,
-//			                    "");
-//			if ((s != null) && (s.length() > 0)){
-//				for(Project p :allprojects){
-//					if(p.getTitle().equals(s)){
-//						Controller.setProject(p);
-//					}
-//				}
-//			}
-//		}
+		
+		
 		p0.setLayout(new BoxLayout(p0, BoxLayout.Y_AXIS));
 
 		p0.add(p1);
@@ -99,82 +77,57 @@ public class DownloadBatch extends JDialog{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JDialog sample = new JDialog();
-			JPanel p = new JPanel();
-			p.setSize(500, 500);
 			
-			
-			
-//			JButton b = (JButton) e.getSource();
-//			JPanel p1 = (JPanel) b.getParent();
-//			JComboBox<String> combo = (JComboBox<String>) p1.getComponent(1);
 			String projectname = (String) projectscombo.getSelectedItem();
 			for(Project curproject: allprojects){
 				if(curproject.getTitle().equals(projectname)){
 					String ss = Controller.getSampleImage(curproject.getId());
-					System.out.print(ss);
-					JEditorPane website;
-					website = new JEditorPane();
-					website.setEditable(false);
-//						website.setOpaque(true);
-//						website.setBackground(Color.white);
-						try {
-							website.setPage(ss);
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-//						JScrollPane htmlScrollPane = new JScrollPane(website);
-//				        htmlScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-					sample.add(website);
+					Image image = null;
+					try {
+						image = ImageIO.read(new URL(ss));
+						image = image.getScaledInstance(500, 400, Image.SCALE_SMOOTH);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					JLabel label = new JLabel(new ImageIcon(image));
+					sample.add(label);
 				}
 			}
-			
-			
-			
-//			sample.add(p);
-			sample.setSize(500,500);
+			sample.setResizable(false);
+			sample.setSize(500,400);
 			sample.setModal(true);
 			sample.setLocation(200, 200);
 			sample.setVisible(true);
-		
+		}
+	};
+	
+	class cancelActList implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JButton b = (JButton) e.getSource();
+			DownloadBatch d = (DownloadBatch) b.getTopLevelAncestor();
+			d.dispose();	
+		}
+	};
+	class downloadActList implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			DownloadBatch_Result result = new DownloadBatch_Result();
+			JButton b = (JButton) e.getSource();
+			String projectname = (String) projectscombo.getSelectedItem();
+			for(Project curproject: allprojects){
+				if(curproject.getTitle().equals(projectname)){
+					result = Controller.downloadBatch(curproject.getId());
+				}
+			}
+			
+			DownloadBatch d = (DownloadBatch) b.getTopLevelAncestor();
+			d.dispose();
+			
+			bState.downloadBatch(result);
 		}
 
-
-
-	};
-
-}
-
-class cancelActList implements ActionListener {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		JButton j = (JButton) e.getSource();
-		DownloadBatch d = (DownloadBatch) j.getTopLevelAncestor();
-		d.dispose();	
 	}
 }
-class downloadActList implements ActionListener, BatchStateListener {
-	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		JButton b = (JButton) e.getSource();
-		JPanel p2 = (JPanel) b.getParent();
-		JPanel p0 = (JPanel) p2.getParent();
-		JPanel p1 = (JPanel) p0.getComponent(0);
-		JComboBox<String> combo = (JComboBox<String>) p1.getComponent(1);
-		
-		
-	}
 
-	@Override
-	public void valueChanged(Cell cell, String newValue) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void selectedCellChanged(Cell newSelectedCell) {
-		// TODO Auto-generated method stub
-		
-	}
-}
